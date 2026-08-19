@@ -1,0 +1,454 @@
+[
+  {
+    "staffRoleName": "Academy Headmaster",
+    "staffRoleSlug": "academy-headmaster"
+  },
+  {
+    "staffRoleName": "Academy Instructor",
+    "staffRoleSlug": "academy-instructor"
+  },
+  {
+    "staffRoleName": "Academy Principal",
+    "staffRoleSlug": "academy-principal"
+  },
+  {
+    "staffRoleName": "Accompanist",
+    "staffRoleSlug": "accompanist"
+  },
+  {
+    "staffRoleName": "Assistant Cashier",
+    "staffRoleSlug": "assistant-cashier"
+  },
+  {
+    "staffRoleName": "Assistant Librarian",
+    "staffRoleSlug": "assistant-librarian"
+  },
+  {
+    "staffRoleName": "Assistant Matron",
+    "staffRoleSlug": "assistant-matron"
+  },
+  {
+    "staffRoleName": "Assistant in Academy",
+    "staffRoleSlug": "assistant-in-academy"
+  },
+  {
+    "staffRoleName": "Assistant in Art",
+    "staffRoleSlug": "assistant-in-art"
+  },
+  {
+    "staffRoleName": "Assistant in Chemistry Laboratory",
+    "staffRoleSlug": "assistant-in-chemistry-laboratory"
+  },
+  {
+    "staffRoleName": "Assistant in English",
+    "staffRoleSlug": "assistant-in-english"
+  },
+  {
+    "staffRoleName": "Assistant in Physical Laboratory",
+    "staffRoleSlug": "assistant-in-physical-laboratory"
+  },
+  {
+    "staffRoleName": "Band Director",
+    "staffRoleSlug": "band-director"
+  },
+  {
+    "staffRoleName": "Battalion Commandant",
+    "staffRoleSlug": "battalion-commandant"
+  },
+  {
+    "staffRoleName": "Book Store Manager",
+    "staffRoleSlug": "book-store-manager"
+  },
+  {
+    "staffRoleName": "Bookroom Manager",
+    "staffRoleSlug": "bookroom-manager"
+  },
+  {
+    "staffRoleName": "Boys' Dormitory Matron",
+    "staffRoleSlug": "boys-dormitory-matron"
+  },
+  {
+    "staffRoleName": "Bursar",
+    "staffRoleSlug": "bursar"
+  },
+  {
+    "staffRoleName": "Business Manager",
+    "staffRoleSlug": "business-manager"
+  },
+  {
+    "staffRoleName": "Cashier",
+    "staffRoleSlug": "cashier"
+  },
+  {
+    "staffRoleName": "Chairman of Committee on Administration",
+    "staffRoleSlug": "chairman-of-committee-on-administration"
+  },
+  {
+    "staffRoleName": "Chaperone",
+    "staffRoleSlug": "chaperone"
+  },
+  {
+    "staffRoleName": "Chief Cook",
+    "staffRoleSlug": "chief-cook"
+  },
+  {
+    "staffRoleName": "College Physician",
+    "staffRoleSlug": "college-physician"
+  },
+  {
+    "staffRoleName": "College Preparatory Department Principal",
+    "staffRoleSlug": "college-preparatory-department-principal"
+  },
+  {
+    "staffRoleName": "College YMCA Secretary",
+    "staffRoleSlug": "college-ymca-secretary"
+  },
+  {
+    "staffRoleName": "Conference Agent",
+    "staffRoleSlug": "conference-agent"
+  },
+  {
+    "staffRoleName": "Cook",
+    "staffRoleSlug": "cook"
+  },
+  {
+    "staffRoleName": "Dean",
+    "staffRoleSlug": "dean"
+  },
+  {
+    "staffRoleName": "Dean of Boys",
+    "staffRoleSlug": "dean-of-boys"
+  },
+  {
+    "staffRoleName": "Dean of Conservatory",
+    "staffRoleSlug": "dean-of-conservatory"
+  },
+  {
+    "staffRoleName": "Dean of Faculty",
+    "staffRoleSlug": "dean-of-faculty"
+  },
+  {
+    "staffRoleName": "Dean of Men",
+    "staffRoleSlug": "dean-of-men"
+  },
+  {
+    "staffRoleName": "Dean of Summer School",
+    "staffRoleSlug": "dean-of-summer-school"
+  },
+  {
+    "staffRoleName": "Dean of Women",
+    "staffRoleSlug": "dean-of-women"
+  },
+  {
+    "staffRoleName": "Dietician",
+    "staffRoleSlug": "dietician"
+  },
+  {
+    "staffRoleName": "Director",
+    "staffRoleSlug": "director"
+  },
+  {
+    "staffRoleName": "Director of Art Class",
+    "staffRoleSlug": "director-of-art-class"
+  },
+  {
+    "staffRoleName": "Director of Athletics",
+    "staffRoleSlug": "director-of-athletics"
+  },
+  {
+    "staffRoleName": "Director of Chorus",
+    "staffRoleSlug": "director-of-chorus"
+  },
+  {
+    "staffRoleName": "Director of Commercial Department",
+    "staffRoleSlug": "director-of-commercial-department"
+  },
+  {
+    "staffRoleName": "Director of Conservatory",
+    "staffRoleSlug": "director-of-conservatory"
+  },
+  {
+    "staffRoleName": "Director of Domestic Science",
+    "staffRoleSlug": "director-of-domestic-science"
+  },
+  {
+    "staffRoleName": "Director of Fine Arts Department",
+    "staffRoleSlug": "director-of-fine-arts-department"
+  },
+  {
+    "staffRoleName": "Director of Laboratory",
+    "staffRoleSlug": "director-of-laboratory"
+  },
+  {
+    "staffRoleName": "Director of Military Department",
+    "staffRoleSlug": "director-of-military-department"
+  },
+  {
+    "staffRoleName": "Director of Music Department",
+    "staffRoleSlug": "director-of-music-department"
+  },
+  {
+    "staffRoleName": "Director of Orchestral Music",
+    "staffRoleSlug": "director-of-orchestral-music"
+  },
+  {
+    "staffRoleName": "Director of Voice Department",
+    "staffRoleSlug": "director-of-voice-department"
+  },
+  {
+    "staffRoleName": "Disciplinarian",
+    "staffRoleSlug": "disciplinarian"
+  },
+  {
+    "staffRoleName": "Dressmaker",
+    "staffRoleSlug": "dressmaker"
+  },
+  {
+    "staffRoleName": "Examiner",
+    "staffRoleSlug": "examiner"
+  },
+  {
+    "staffRoleName": "Executive Secretary",
+    "staffRoleSlug": "executive-secretary"
+  },
+  {
+    "staffRoleName": "Financial Agent",
+    "staffRoleSlug": "financial-agent"
+  },
+  {
+    "staffRoleName": "First Assistant in Academy",
+    "staffRoleSlug": "first-assistant-in-academy"
+  },
+  {
+    "staffRoleName": "First Assistant in Piano",
+    "staffRoleSlug": "first-assistant-in-piano"
+  },
+  {
+    "staffRoleName": "Girls' Athletics Director",
+    "staffRoleSlug": "girls-athletics-director"
+  },
+  {
+    "staffRoleName": "Girls' Dormitory Matron",
+    "staffRoleSlug": "girls-dormitory-matron"
+  },
+  {
+    "staffRoleName": "Govenor of Boys",
+    "staffRoleSlug": "govenor-of-boys"
+  },
+  {
+    "staffRoleName": "Governess",
+    "staffRoleSlug": "governess"
+  },
+  {
+    "staffRoleName": "Groundskeeper",
+    "staffRoleSlug": "groundskeeper"
+  },
+  {
+    "staffRoleName": "Hall Manager",
+    "staffRoleSlug": "hall-manager"
+  },
+  {
+    "staffRoleName": "Head of Education Department",
+    "staffRoleSlug": "head-of-education-department"
+  },
+  {
+    "staffRoleName": "Head of English Department",
+    "staffRoleSlug": "head-of-english-department"
+  },
+  {
+    "staffRoleName": "Head of Mathematics and Physics Department",
+    "staffRoleSlug": "head-of-mathematics-and-physics-department"
+  },
+  {
+    "staffRoleName": "Head of Modern Language Department",
+    "staffRoleSlug": "head-of-modern-language-department"
+  },
+  {
+    "staffRoleName": "Head of Physical Sciences Department",
+    "staffRoleSlug": "head-of-physical-sciences-department"
+  },
+  {
+    "staffRoleName": "Head of Social Science Department",
+    "staffRoleSlug": "head-of-social-science-department"
+  },
+  {
+    "staffRoleName": "High School Headmaster",
+    "staffRoleSlug": "high-school-headmaster"
+  },
+  {
+    "staffRoleName": "House Mother",
+    "staffRoleSlug": "house-mother"
+  },
+  {
+    "staffRoleName": "Kitchen Manager",
+    "staffRoleSlug": "kitchen-manager"
+  },
+  {
+    "staffRoleName": "Kitchen Staff",
+    "staffRoleSlug": "kitchen-staff"
+  },
+  {
+    "staffRoleName": "Lady Manager",
+    "staffRoleSlug": "lady-manager"
+  },
+  {
+    "staffRoleName": "Lady Principal",
+    "staffRoleSlug": "lady-principal"
+  },
+  {
+    "staffRoleName": "Librarian",
+    "staffRoleSlug": "librarian"
+  },
+  {
+    "staffRoleName": "Library Assistant",
+    "staffRoleSlug": "library-assistant"
+  },
+  {
+    "staffRoleName": "Manager of The Cottages",
+    "staffRoleSlug": "manager-of-the-cottages"
+  },
+  {
+    "staffRoleName": "Matron",
+    "staffRoleSlug": "matron"
+  },
+  {
+    "staffRoleName": "Men's Dormitory Matron",
+    "staffRoleSlug": "mens-dormitory-matron"
+  },
+  {
+    "staffRoleName": "Men's Nurse",
+    "staffRoleSlug": "mens-nurse"
+  },
+  {
+    "staffRoleName": "Nurse",
+    "staffRoleSlug": "nurse"
+  },
+  {
+    "staffRoleName": "Office",
+    "staffRoleSlug": "office"
+  },
+  {
+    "staffRoleName": "Orchestra Conductor",
+    "staffRoleSlug": "orchestra-conductor"
+  },
+  {
+    "staffRoleName": "Practice Manager",
+    "staffRoleSlug": "practice-manager"
+  },
+  {
+    "staffRoleName": "President",
+    "staffRoleSlug": "president"
+  },
+  {
+    "staffRoleName": "Recorder",
+    "staffRoleSlug": "recorder"
+  },
+  {
+    "staffRoleName": "Registrar",
+    "staffRoleSlug": "registrar"
+  },
+  {
+    "staffRoleName": "SATC Adjutant",
+    "staffRoleSlug": "satc-adjutant"
+  },
+  {
+    "staffRoleName": "SATC Commanding Officer",
+    "staffRoleSlug": "satc-commanding-officer"
+  },
+  {
+    "staffRoleName": "SATC Company Commander",
+    "staffRoleSlug": "satc-company-commander"
+  },
+  {
+    "staffRoleName": "SATC Small Arms Instructor",
+    "staffRoleSlug": "satc-small-arms-instructor"
+  },
+  {
+    "staffRoleName": "Seamstress",
+    "staffRoleSlug": "seamstress"
+  },
+  {
+    "staffRoleName": "Second Assistant in Academy",
+    "staffRoleSlug": "second-assistant-in-academy"
+  },
+  {
+    "staffRoleName": "Second Assistant in Piano",
+    "staffRoleSlug": "second-assistant-in-piano"
+  },
+  {
+    "staffRoleName": "Secretary to the Executive Secretary",
+    "staffRoleSlug": "secretary-to-the-executive-secretary"
+  },
+  {
+    "staffRoleName": "Secretary to the President",
+    "staffRoleSlug": "secretary-to-the-president"
+  },
+  {
+    "staffRoleName": "Senior Home Matron",
+    "staffRoleSlug": "senior-home-matron"
+  },
+  {
+    "staffRoleName": "Stenographer",
+    "staffRoleSlug": "stenographer"
+  },
+  {
+    "staffRoleName": "Stewardess",
+    "staffRoleSlug": "stewardess"
+  },
+  {
+    "staffRoleName": "Student Assistant",
+    "staffRoleSlug": "student-assistant"
+  },
+  {
+    "staffRoleName": "Student Assistant in Laboratories",
+    "staffRoleSlug": "student-assistant-in-laboratories"
+  },
+  {
+    "staffRoleName": "Student Assistant in Science",
+    "staffRoleSlug": "student-assistant-in-science"
+  },
+  {
+    "staffRoleName": "Sunday School Superintendant",
+    "staffRoleSlug": "sunday-school-superintendant"
+  },
+  {
+    "staffRoleName": "Superintendent of Buildings and Grounds",
+    "staffRoleSlug": "superintendent-of-buildings-and-grounds"
+  },
+  {
+    "staffRoleName": "Superintendent of Culinary Department",
+    "staffRoleSlug": "superintendent-of-culinary-department"
+  },
+  {
+    "staffRoleName": "Superintendent of Dining Hall",
+    "staffRoleSlug": "superintendent-of-dining-hall"
+  },
+  {
+    "staffRoleName": "Superintendent of Practice",
+    "staffRoleSlug": "superintendent-of-practice"
+  },
+  {
+    "staffRoleName": "Superintendent of Study Hall",
+    "staffRoleSlug": "superintendent-of-study-hall"
+  },
+  {
+    "staffRoleName": "Third Assistant in Piano",
+    "staffRoleSlug": "third-assistant-in-piano"
+  },
+  {
+    "staffRoleName": "Unknown Role",
+    "staffRoleSlug": "unknown-role"
+  },
+  {
+    "staffRoleName": "Vice President",
+    "staffRoleSlug": "vice-president"
+  },
+  {
+    "staffRoleName": "Wife of President",
+    "staffRoleSlug": "wife-of-president"
+  },
+  {
+    "staffRoleName": "Women's Nurse",
+    "staffRoleSlug": "womens-nurse"
+  }
+]

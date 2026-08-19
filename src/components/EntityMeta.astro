@@ -1,0 +1,32 @@
+---
+export interface Props {
+    type:
+        | "person"
+        | "team"
+        | "org"
+        | "org-instance"
+        | "class"
+        | "subject"
+        | "building"
+        | "instrument"
+        | "staff-role"
+        | "title";
+    name: string;
+    year?: string | number | number[] | null;
+    sport?: string | null;
+    orgName?: string | null;
+    notes?: string | null;
+}
+const { type, name, year, sport, orgName, notes } = Astro.props;
+const yr =
+    year == null ? "" : Array.isArray(year) ? year.join("–") : String(year);
+const tags: string[] = [];
+if (yr) tags.push(yr);
+if (sport) tags.push(sport);
+if (orgName) tags.push(orgName);
+---
+
+<aside
+    data-pagefind-meta={`type:${type}${tags.length ? "\ntags:" + tags.join(" | ") : ""}${notes ? "\nnotes:" + notes.replace(/\s+/g, " ") : ""}`}
+>
+</aside>

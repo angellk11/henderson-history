@@ -6,12 +6,22 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "build:search": "tsx scripts/search/build-index.ts",
+    "dev": "npm run build:data && astro dev",
+    "build:data": "tsx scripts/build-data.ts",
+    "dev:data": "tsx scripts/build-data.ts --watch",
+    "build": "npm run build:data && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.1.6"
+    "astro": "^7.2.2",
+    "minisearch": "^7.2.0",
+    "neo4j-driver": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.23.9"
   }
 }

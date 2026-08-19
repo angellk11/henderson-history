@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON } from '../../lib/loaders';
+
+interface StaffRole {
+  staffRoleSlug: string;
+  staffRoleName: string;
+}
+
+interface Person {
+  personId?: number;
+  slug?: string;
+  name: string;
+  nickname?: string | null;
+  lastName?: string | null;
+  firstName?: string | null;
+  staffRole?: { staffRoleSlug: string; [k: string]: unknown }[];
+}
+
+interface Sibling { href: string; label: string }
+
+interface Props {
+  role: StaffRole;
+  prev: Sibling | null;
+  next: Sibling | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>> {
+  const raw = await loadJSON<any[]>('data/build/staffRoles.json');
+
+  const roles: StaffRole[] = raw
+    .map((row) => row?.staffRole ?? row)
+    .filter((s): s is StaffRole => !!s && !!(s as any).staffRoleSlug);
+  const sorted = [...roles].sort((a, b) =>
+    (a.staffRoleName ?? '').localeCompare(b.staffRoleName ?? '')
+  );
+
+
+
+  return sorted.map((s, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: s.staffRoleSlug },
+      props: {
+        role: s,
+        prev: prev ? { href: `/staff-roles/${prev.staffRoleSlug}`, label: prev.staffRoleName } : null,
+        next: next ? { href: `/staff-roles/${next.staffRoleSlug}`, label: next.staffRoleName } : null,
+      },
+    };
+  });
+}
+
+const { role, prev, next } = Astro.props as Props;
+
+const people = await loadJSON<Person[]>('data/build/people.json');
+  
+const holders: Person[] = people.filter((p): p is Person => {
+  const list = p.staffRole ?? [];
+  return list.some((x) => x.staffRoleSlug === role.staffRoleSlug);
+});
+
+holders.sort(
+ (a, b) =>
+    (a.lastName ?? a.name ?? '').toString().localeCompare(
+      (b.lastName ?? b.name ?? '').toString()
+    ) ||
+    (a.firstName ?? '').toString().localeCompare((b.firstName ?? '').toString())
+);
+---
+<BaseLayout title={role.staffRoleName} description={`Holders of the role ${role.staffRoleName}.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Staff roles', href: '/staff-roles' },
+      { label: role.staffRoleName },
+    ]}
+  />
+
+  <EntityHeader title={role.staffRoleName} />
+
+  <EntityMeta type="staff-role" name={role.staffRoleName} />
+
+  <RelatedList
+    title={`Holders${holders.length ? ` (${holders.length})` : ''}`}
+    items={holders.map((p) => ({
+      name: p.name,
+      href: `/people/${p.slug ?? p.personId}`,
+    }))}
+  />
+
+  <PrevNext prev={prev} next={next} baseHref="/staff-roles" baseLabel="All staff roles" />
+</BaseLayout>

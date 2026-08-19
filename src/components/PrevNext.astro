@@ -1,0 +1,49 @@
+---
+export interface Sibling {
+  label: string;
+  href: string;
+}
+export interface Props {
+  prev?: Sibling | null;
+  next?: Sibling | null;
+  baseHref?: string;
+  baseLabel?: string;
+}
+const { prev, next, baseHref, baseLabel } = Astro.props;
+const showBase = !!baseHref;
+---
+{(prev || next || showBase) && (
+  <nav aria-label="Adjacent items" class="prev-next">
+    <ul>
+      <li class="prev">
+        {prev ? (
+          <a href={prev.href} rel="prev">← <span class="t">{prev.label}</span></a>
+        ) : showBase ? (
+          <a href={baseHref}>← {baseLabel ?? 'Index'}</a>
+        ) : (
+          <span class="ph" aria-hidden="true"></span>
+        )}
+      </li>
+      <li class="next">
+        {next ? (
+          <a href={next.href} rel="next"><span class="t">{next.label}</span> →</a>
+        ) : showBase ? (
+          <a href={baseHref}>{baseLabel ?? 'Index'} →</a>
+        ) : (
+          <span class="ph" aria-hidden="true"></span>
+        )}
+      </li>
+    </ul>
+  </nav>
+)}
+
+<style>
+  .prev-next ul { list-style: none; padding: 0; margin: 2rem 0 0; display: flex; justify-content: space-between; gap: 1rem; }
+  .prev-next li { flex: 1; min-width: 0; }
+  .prev-next .prev { text-align: left; }
+  .prev-next .next { text-align: right; margin-left: auto; }
+  .prev-next .t { font-weight: 600; }
+  .prev-next .ph { display: inline-block; min-width: 1px; }
+  .prev-next li a { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+  .prev-next li a .t { white-space: nowrap; }
+</style>

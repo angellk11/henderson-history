@@ -1,0 +1,237 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import PrevNext from "../../components/PrevNext.astro";
+import { loadJSON } from "../../lib/loaders";
+import { yearValue } from "../../lib/types";
+
+interface ClassRow {
+  name: string;
+  classSlug: string;
+  classYear: number;
+}
+interface TeamRow {
+  name: string;
+  teamSlug: string;
+  sport?: string | null;
+  teamYear?: number | null;
+}
+interface OrgRow {
+  orgInstanceName: string;
+  orgInstanceSlug: string;
+  orgName?: string | null;
+  orgInstanceDate?: number | null;
+}
+interface PersonRow {
+  name: string;
+  slug?: string;
+  personId?: number;
+  lastName?: string | null;
+  classes?: { classYear: number }[];
+}
+
+interface Sibling {
+  href: string;
+  label: string;
+}
+interface Props {
+  year: number;
+  allYears: number[];
+  people: PersonRow[];
+  teams: TeamRow[];
+  orgInst: OrgRow[];
+  classes: ClassRow[];
+  prev: Sibling | null;
+  next: Sibling | null;
+}
+
+export async function getStaticPaths(): Promise<
+  Array<{ params: { year: string }; props: Props }>
+> {
+  const [people, teams, orgInst, classes] = await Promise.all([
+    loadJSON<PersonRow[]>("data/build/people.json"),
+    loadJSON<TeamRow[]>("data/build/teams.json"),
+    loadJSON<OrgRow[]>("data/build/orgInstances.json"),
+    loadJSON<ClassRow[]>("data/build/classes.json"),
+  ]);
+
+  function yearsActive(p: PersonRow): number[] {
+    const raw = (p.classes ?? []).map((c) => c.classYear);
+    const ys = raw.filter((y): y is number => Number.isFinite(y));
+    if (ys.length === 0) return [];
+    return Array.from(new Set(ys)).sort((a, b) => a - b);
+  }
+
+  const years = new Set<number>();
+  for (const p of people) for (const y of yearsActive(p)) years.add(y);
+  for (const t of teams) {
+    const yr = yearValue(t.teamYear);
+    if (yr !== null) years.add(yr);
+  }
+
+  for (const o of orgInst) {
+    const yr = yearValue(o.orgInstanceDate);
+    if (yr !== null) years.add(yr);
+  }
+
+  for (const c of classes) {
+    const yr = yearValue(c.classYear);
+    if (yr !== null) years.add(yr);
+  }
+
+  const allYears = [...years].sort((a, b) => a - b);
+
+  return allYears.map((year, idx) => {
+    const prev = idx > 0 ? allYears[idx - 1] : null;
+    const next = idx < allYears.length - 1 ? allYears[idx + 1] : null;
+    return {
+      params: { year: String(year) },
+      props: {
+        year,
+        allYears,
+        people,
+        teams,
+        orgInst,
+        classes,
+        prev:
+          prev !== null
+            ? { href: `/years/${prev}`, label: String(prev) }
+            : null,
+        next:
+          next !== null
+            ? { href: `/years/${next}`, label: String(next) }
+            : null,
+      },
+    };
+  });
+}
+
+const {
+  year,
+  prev,
+  next,
+  people,
+  teams,
+  orgInst,
+  classes,
+  allYears: years,
+} = Astro.props as Props;
+const y = Number(year);
+
+const classesYear = classes
+  .filter((c) => yearValue(c.classYear) === y)
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const teamsYear = teams
+  .filter((t) => yearValue(t.teamYear) === y)
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const orgsYear = orgInst
+  .filter((o) => yearValue(o.orgInstanceDate) === y)
+  .sort((a, b) =>
+    (a.orgInstanceName ?? "").localeCompare(b.orgInstanceName ?? ""),
+  );
+
+const peopleOnCampus: PersonRow[] = people
+  .filter((p) => {
+    const ys = yearsActive(p);
+    return ys.length > 0 && ys[0] <= y && ys[ys.length - 1] >= y;
+  })
+  .sort((a, b) =>
+    (a.lastName ?? a.name ?? "")
+      .toString()
+      .localeCompare((b.lastName ?? b.name ?? "").toString()),
+  );
+
+function yearsActive(p: PersonRow): number[] {
+  const raw = (p.classes ?? []).map((c) => c.classYear);
+  const ys = raw.filter((y): y is number => Number.isFinite(y));
+  if (ys.length === 0) return [];
+  return Array.from(new Set(ys)).sort((a, b) => a - b);
+}
+---
+
+<BaseLayout title={`Year ${y}`} description={`College history for ${y}.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: "Home", href: "/" },
+      { label: "Years", href: "/years" },
+      { label: String(y) },
+    ]}
+  />
+
+  <h1>{y}</h1>
+  <p class="meta">{years.length} known years in the data.</p>
+
+  <h2>Classes</h2>
+  <ul>
+    {
+      classesYear.map((c) => (
+        <li>
+          <a href={`/classes/${c.classSlug}`}>{c.name}</a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Athletic teams</h2>
+  <ul>
+    {
+      teamsYear.map((t) => (
+        <li>
+          <a href={`/teams/${t.teamSlug}`}>{t.name}</a>
+          {t.sport ? <small> · {t.sport}</small> : null}
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Organizations active</h2>
+  <ul>
+    {
+      orgsYear.map((o) => (
+        <li>
+          <a href={`/org-instances/${o.orgInstanceSlug}`}>
+            {o.orgInstanceName}
+          </a>
+          {o.orgName ? <small> · {o.orgName}</small> : null}
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>People on campus ({peopleOnCampus.length})</h2>
+  <ul class="people">
+    {
+      peopleOnCampus.slice(0, 500).map((p) => (
+        <li>
+          <a href={`/people/${p.slug ?? p.personId}`}>{p.name}</a>
+        </li>
+      ))
+    }
+  </ul>
+  {
+    peopleOnCampus.length > 500 && (
+      <p>
+        <small>Showing first 500 of {peopleOnCampus.length}.</small>
+      </p>
+    )
+  }
+
+  <PrevNext prev={prev} next={next} baseHref="/years" baseLabel="All years" />
+
+  <style>
+    .people {
+      columns: 2;
+      column-gap: 2rem;
+    }
+    @media (min-width: 60rem) {
+      .people {
+        columns: 4;
+      }
+    }
+    .meta {
+      color: var(--muted);
+    }
+  </style>
+</BaseLayout>

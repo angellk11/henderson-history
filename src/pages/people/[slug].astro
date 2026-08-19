@@ -1,0 +1,292 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON, pairwise, staticPathsFromPairs } from '../../lib/loaders';
+import {type StaffRole} from '../../lib/types'
+
+interface Person {
+  slug: string;
+  name: string;
+  lastName?: string | null;
+  firstName?: string | null;
+  nickname?: string | null;
+  wentBy?: string | null;
+  note?: string | null;
+  education?: string | null;
+  classes?: any[];
+  teams?: any[];
+  orgs?: any[];
+  subjects?: any[];
+  orchInstruments?: any[];
+  bandInstruments?: any[];
+  staffRole?: any[];
+  degree?: any[];
+  parent?: any[];
+  spouse?: any[];
+  siblings?: any[];
+  child?: any[];
+  namesake?: any[];
+}
+
+interface Props {
+  person: Person;
+  prev: { href: string; label: string } | null;
+  next: { href: string; label: string } | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>> {
+  const people = await loadJSON<Person[]>('data/build/people.json');
+
+  const validPeople = people.filter(
+    (p): p is Person =>
+      typeof p.slug === 'string' &&
+      p.slug.trim() !== ''
+  );
+
+  const sorted = [...validPeople].sort((a, b) => {
+    const al = (a.lastName ?? a.name ?? '').toLowerCase();
+    const bl = (b.lastName ?? b.name ?? '').toLowerCase();
+    if (al !== bl) return al.localeCompare(bl);
+
+    const af = (a.firstName ?? '').toLowerCase();
+    const bf = (b.firstName ?? '').toLowerCase();
+    if (af !== bf) return af.localeCompare(bf);
+
+    return a.slug.localeCompare(b.slug);
+  });
+
+  return sorted.map((p, idx, all) => {
+    const prev = idx > 0 ? all[idx - 1] : null;
+    const next = idx < all.length - 1 ? all[idx + 1] : null;
+
+    return {
+      params: { slug: p.slug.trim() },
+      props: {
+        person: p,
+        prev: prev ? { href: `/people/${prev.slug.trim()}`, label: prev.name } : null,
+        next: next ? { href: `/people/${next.slug.trim()}`, label: next.name } : null,
+      },
+    };
+  });
+}
+
+
+
+const { person, prev, next } = Astro.props;
+
+const classes          = person.classes ?? [];
+const teams            = person.teams ?? [];
+const orgs             = person.orgs ?? [];
+const subjects         = person.subjects ?? [];
+const orchInstruments  = person.orchInstruments ?? [];
+const bandInstruments  = person.bandInstruments ?? [];
+const staffRole        = person.staffRole ?? [];
+const degree           = person.degree ?? [];
+const parents          = person.parent ?? [];
+const spouses          = person.spouse ?? [];
+const siblingsList     = person.siblings ?? [];
+const childrenList     = person.child ?? [];
+const namesake         = person.namesake ?? [];
+
+const classLine = classes
+  .slice()
+  .sort((a, b) => a.classYear - b.classYear)
+  .map((c) => (`<a href=/classes/${c.classSlug}>${c.name}</a>`))
+  .join(' → ');
+
+const meta: { label: string; value: string }[] = [];
+if (classLine) meta.push({ label: 'Class', value: classLine });
+if (degree.length > 0) {
+  meta.push({
+    label: 'Degree',
+    value: degree.map((d) => `${d.name}${d.gradDate ? ` (${d.gradDate})` : ''}`).join(', '),
+  });
+}
+if (person.education) meta.push({ label: 'Education', value: person.education });
+
+
+const getYear = (value: string | number | null | undefined) => {
+  if (value == null) return null;
+
+  const match = String(value).match(/\d{4}/);
+  return match?.[0] ?? String(value);
+};
+
+const formatTerm = (
+  start: string | number | null | undefined,
+  end: string | number | null | undefined
+) => {
+  if (!start && !end) return null;
+
+  return `${getYear(start) ?? "?"}–${getYear(end) ?? "present"}`;
+};
+
+const formatStaffRoleMeta = (role: StaffRole) => {
+  const terms = [
+    formatTerm(role.termStart, role.termEnd),
+    formatTerm(role.term2Start, role.term2End),
+  ].filter(Boolean);
+
+  if (terms.length > 0) {
+    return terms.join("; ");
+  }
+
+  if (role.year?.length) {
+    return role.year.join(", ");
+  }
+
+  return null;
+};
+
+const staffRoleItems = (staffRole ?? []).map((role: StaffRole) => ({
+  name: role.staffRoleName,
+  href: `/staff-roles/${role.staffRoleSlug}`,
+  meta: formatStaffRoleMeta(role),
+}));
+---
+<BaseLayout title={person.name} description={`${person.name} — biography and connections.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'People', href: '/people' },
+      { label: person.name },
+    ]}
+  />
+
+  <EntityHeader
+    title={person.name}
+    subtitle={person.wentBy ?? null}
+    nickname={person.nickname ?? null}
+  />
+
+  {meta.length > 0 && (
+    <section>
+      <h2>Quick facts</h2>
+      <dl class="fact-grid">
+        {meta.map((m) => (
+          <Fragment>
+            <dt>{m.label}</dt>
+            <dd set:html={m.value}></dd>
+          </Fragment>
+        ))}
+      </dl>
+      <style>
+        .fact-grid { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem; }
+        dt { color: var(--muted); }
+        dd { margin: 0; }
+      </style>
+    </section>
+  )}
+
+  <EntityMeta type="person" name={person.name} notes={person.note ?? null} />
+
+  {person.note && (
+    <section>
+      <h2>Note</h2>
+      <p set:html={person.note}></p>
+    </section>
+  )}
+
+  <RelatedList
+    title="Athletic teams"
+    items={teams.map((t: any) => ({
+      name: t.name,
+      href: `/teams/${t.teamSlug}`,
+      meta: [t.position?.join?.(', '), t.office?.join?.(', ')].filter(Boolean).join(' · ') || null,
+      unconfirmed: t.certainty === 'Unconfirmed',
+    }))}
+  />
+
+  <RelatedList
+    title="Organizations"
+    items={orgs.map((o: any) => ({
+      name: o.orgInstanceName,
+      href: `/org-instances/${o.orgInstanceSlug}`,
+      meta: o.office?.length
+        ? `${o.office.join(', ')}`
+        : null,
+    }))}
+  />
+
+  <RelatedList
+    title="Subjects taught"
+    items={subjects.map((s: any) => ({
+      name: s.subjectName,
+      href: `/subjects/${s.subjectSlug}`,
+      meta: s.taughtYears?.length
+        ? `${s.taughtYears.join(', ')}`
+        : null,
+    }))}
+  />
+
+  {(orchInstruments.length > 0 || bandInstruments.length > 0) && (
+    <RelatedList
+      title="Instruments"
+      items={[
+        ...orchInstruments.map((i: any) => ({
+          name: `${i.instrumentName} (orchestra)`,
+          href: `/instruments/${i.instrumentSlug}`,
+        })),
+        ...bandInstruments.map((i: any) => ({
+          name: `${i.instrumentName} (band)`,
+          href: `/instruments/${i.instrumentSlug}`,
+        })),
+      ]}
+    />
+  )}
+
+  {staffRoleItems.length > 0 && (
+    <RelatedList
+      title="Staff roles"
+      items={staffRoleItems}
+    />
+  )}
+
+  {(parents.length > 0 || spouses.length > 0 || siblingsList.length > 0 || childrenList.length > 0) && (
+    <RelatedList
+      title="Family"
+      items={[
+        ...parents.map((p: any) => ({
+          name: `Parent: ${p.name}`,
+          href: `/people/${p.slug ?? p.personId}`,
+          meta: p.note ?? null,
+        })),
+        ...spouses.map((p: any) => ({
+          name: `Spouse: ${p.name}`,
+          href: `/people/${p.slug ?? p.personId}`,
+          meta: p.note ?? null,
+        })),
+        ...siblingsList.map((p: any) => ({
+          name: `Sibling: ${p.name}`,
+          href: `/people/${p.slug ?? p.personId}`,
+          meta: p.note ?? null,
+        })),
+        ...childrenList.map((p: any) => ({
+          name: `Child: ${p.name}`,
+          href: `/people/${p.slug ?? p.personId}`,
+          meta: p.note ?? null,
+        })),
+      ]}
+    />
+  )}
+
+  {namesake.length > 0 && (
+    <RelatedList
+      title="Namesakes"
+      items={namesake.map((f: any) => ({
+        name: f.featureName ?? f.orgName,
+        href: f.featureSlug
+          ? `/campus/${f.featureSlug}`
+          : f.orgSlug
+          ? `/orgs/${f.orgSlug}`
+          : '#',
+      }))}
+    />
+  )}
+
+  <PrevNext prev={prev} next={next} baseHref="/people" baseLabel="All people" />
+</BaseLayout>

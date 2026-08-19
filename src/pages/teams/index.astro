@@ -1,0 +1,23 @@
+---
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const teams = JSON.parse(await fs.readFile(path.resolve(process.cwd(), 'data/build/teams.json'), 'utf-8'));
+const sorted = [...teams].sort((a, b) => (a.teamYear ?? 0) - (b.teamYear ?? 0) || a.name.localeCompare(b.name));
+---
+<BaseLayout title="Teams" description="All athletic teams in the college history.">
+  <h1>Teams</h1>
+  <p>{sorted.length} teams.</p>
+  <ul class="rows">
+    {sorted.map((t) => (
+      <li>
+        <a href={`/teams/${t.teamSlug}`}>{t.name}</a>
+      </li>
+    ))}
+  </ul>
+  <style>
+    .rows { columns: 2; column-gap: 2rem; list-style: none; padding: 0; }
+    @media (min-width: 60rem) { .rows { columns: 3; } }
+  </style>
+</BaseLayout>

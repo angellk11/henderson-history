@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadJSON } from '../../../lib/loaders';
+
+interface OrgInst {
+  orgInstanceSlug: string;
+  orgInstanceName: string;
+  orgName?: string | null;
+  orgInstanceDate?: number | null;
+}
+
+interface Props {
+  year: number;
+  list: OrgInst[];
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { year: string }; props: Props }>> {
+  const inst = await loadJSON<OrgInst[]>('data/build/orgInstances.json');
+
+  const years = [...new Set(
+    inst
+      .map((i) => Number(i.orgInstanceDate))
+      .filter((y): y is number => Number.isFinite(y))
+  )].sort((a, b) => a - b);
+
+  return years.map((year) => {
+    const list = inst
+      .filter((i) => Number(i.orgInstanceDate) === year)
+      .sort((a, b) => (a.orgInstanceName ?? '').localeCompare(b.orgInstanceName ?? ''));
+
+    return {
+      params: { year: String(year) },
+      props: { year, list },
+    };
+  });
+}
+
+const { year, list } = Astro.props as Props;
+---
+<BaseLayout title={`Org instances: ${year}`} description={`Organizations active in ${year}.`}>
+  <h1>Organizations · {year}</h1>
+  <p>{list.length} {list.length === 1 ? 'instance' : 'instances'} active in {year}.</p>
+  <ul>
+    {list.map((i) => (
+      <li>
+        <a href={`/org-instances/${i.orgInstanceSlug}`}>{i.orgInstanceName}</a>
+        {i.orgName ? <small> · {i.orgName}</small> : null}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

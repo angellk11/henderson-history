@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadJSON } from '../../../lib/loaders';
+
+interface Person {
+  personId?: number;
+  slug?: string;
+  name: string;
+  nickname?: string | null;
+  lastName?: string | null;
+  classes?: { classYear: number }[];
+}
+
+interface Props {
+  year: number;
+  list: Person[];
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { year: string }; props: Props }>> {
+  const people = await loadJSON<Person[]>('data/build/people.json');
+
+  function yearsActive(p: Person): number[] {
+    const ys = (p.classes ?? [])
+      .map((c) => c.classYear)
+      .filter((y): y is number => Number.isFinite(y));
+    return Array.from(new Set(ys)).sort((a, b) => a - b);
+  }
+
+  const yearSet = new Set<number>();
+  for (const p of people) for (const y of yearsActive(p)) yearSet.add(y);
+  const years = [...yearSet].sort((a, b) => a - b);
+
+  return years.map((year) => {
+    const list = people
+      .filter((p) => {
+        const ys = yearsActive(p);
+        return ys.length > 0 && ys[0] <= year && ys[ys.length - 1] >= year;
+      })
+      .sort((a, b) =>
+        (a.lastName ?? a.name ?? '').toString().localeCompare(
+          (b.lastName ?? b.name ?? '').toString()
+        )
+      );
+
+    return {
+      params: { year: String(year) },
+      props: { year, list },
+    };
+  });
+}
+
+const { year, list } = Astro.props as Props;
+---
+<BaseLayout title={`People in ${year}`} description={`People on campus in ${year}.`}>
+  <h1>People · {year}</h1>
+  <p>{list.length} {list.length === 1 ? 'person' : 'people'} on campus in {year}.</p>
+  <ul class="rows">
+    {list.slice(0, 1500).map((p) => (
+      <li>
+        <a href={`/people/${p.slug ?? p.personId}`}>{p.name}</a>
+        {p.nickname ? <small> “{p.nickname}”</small> : null}
+      </li>
+    ))}
+  </ul>
+  {list.length > 1500 && (
+    <p><small>Showing first 1,500 of {list.length}.</small></p>
+  )}
+</BaseLayout>
+
+<style>
+  .rows { columns: 2; column-gap: 2rem; list-style: none; padding: 0; }
+  @media (min-width: 60rem) { .rows { columns: 4; } }
+  small { color: var(--muted); }
+</style>

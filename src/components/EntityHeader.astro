@@ -1,0 +1,32 @@
+---
+export interface Props {
+  title: string;
+  subtitle?: string | null;
+  nickname?: string | null;
+  unconfirmed?: boolean;
+  meta?: { label: string; value: string }[];
+}
+const { title, subtitle, nickname, unconfirmed, meta = [] } = Astro.props;
+---
+<header>
+  <h1>
+    {title}
+    {unconfirmed && <span class="badge unconfirmed" title="Unconfirmed in source data">Unconfirmed</span>}
+  </h1>
+  {nickname && <p class="nickname"><em>“{nickname}”</em></p>}
+  {subtitle && <p class="subtitle">{subtitle}</p>}
+  {meta.length > 0 && (
+    <dl class="fact-grid">
+      {meta.map((m) => (
+        <>
+          <dt>{m.label}</dt>
+          <dd>{m.value}</dd>
+        </>
+      ))}
+    </dl>
+  )}
+</header>
+<style>
+  .nickname { color: var(--muted); margin: 0; }
+  .subtitle { color: var(--muted); margin: .25rem 0 0; }
+</style>

@@ -1,0 +1,44 @@
+---
+import fs from "node:fs/promises";
+import path from "node:path";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const people: any[] = JSON.parse(
+  await fs.readFile(
+    path.resolve(process.cwd(), "data/build/people.json"),
+    "utf-8",
+  ),
+);
+const sorted = [...people].sort((a, b) =>
+  (a.lastName ?? "").localeCompare(b.lastName ?? ""),
+);
+---
+
+<BaseLayout
+  title="People"
+  description="All people in the college history encyclopedia."
+>
+  <h1>People</h1>
+  <p>{sorted.length} entries.</p>
+  <ul class="people">
+    {
+      sorted.map((p) => (
+        <li>
+          <a href={`/people/${p.slug}`}>{p.name}</a>
+          {p.wentBy && <small> “{p.wentBy}”</small>}
+        </li>
+      ))
+    }
+  </ul>
+  <style>
+    .people {
+      columns: 2;
+      column-gap: 2rem;
+    }
+    @media (min-width: 60rem) {
+      .people {
+        columns: 4;
+      }
+    }
+  </style>
+</BaseLayout>

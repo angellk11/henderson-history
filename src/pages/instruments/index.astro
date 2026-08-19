@@ -1,0 +1,25 @@
+---
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const raw: any[] = JSON.parse(
+  await fs.readFile(path.resolve(process.cwd(), 'data/build/instruments.json'), 'utf-8')
+);
+const items = raw
+  .map((r) => r?.instrument ?? r)
+  .filter((s) => s?.instrumentSlug)
+  .sort((a: any, b: any) => a.instrumentName.localeCompare(b.instrumentName));
+---
+<BaseLayout title="Instruments" description="All instruments played at the college.">
+  <h1>Instruments</h1>
+  <ul class="rows">
+    {items.map((s: any) => (
+      <li><a href={`/instruments/${s.instrumentSlug}`}>{s.instrumentName}</a></li>
+    ))}
+  </ul>
+  <style>
+    .rows { columns: 2; list-style: none; padding: 0; }
+    @media (min-width: 60rem) { .rows { columns: 4; } }
+  </style>
+</BaseLayout>

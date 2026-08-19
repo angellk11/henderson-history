@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { loadJSON } from "../../../lib/loaders";
+
+interface Team {
+  teamSlug: string;
+  name: string;
+  sport?: string | null;
+  sportSlug?: string | null;
+  teamYear?: number | null;
+}
+
+interface Props {
+  sport: string;
+  list: Team[];
+}
+
+export async function getStaticPaths(): Promise<
+  Array<{ params: { sport: string }; props: Props }>
+> {
+  const teams = await loadJSON<Team[]>("data/build/teams.json");
+
+  const sportSlugs = [
+    ...new Set(
+      teams
+        .map((t) => (t.sportSlug ?? t.sport ?? "").toString().trim())
+        .filter((s) => s.length > 0),
+    ),
+  ].sort();
+
+  const sportKeys = [
+    ...new Set(
+      teams
+        .map((t) => (t.sportSlug ?? t.sport ?? "").toString().trim())
+        .filter((s) => s.length > 0),
+    ),
+  ].sort();
+
+  return sportSlugs.map((slug) => {
+    const list = teams
+      .filter(
+        (t) =>
+          (t.sportSlug ?? t.sport ?? "").toString().toLowerCase() ===
+          slug.toLowerCase(),
+      )
+      .sort((a, b) => (a.teamYear ?? 0) - (b.teamYear ?? 0));
+
+    const sportDisplay = list.find((t) => t.sport)?.sport ?? slug;
+
+    return {
+      params: { sport: slug.toLowerCase() },
+      props: { sport: sportDisplay, list },
+    };
+  });
+}
+
+const { sport, list } = Astro.props as Props;
+---
+
+<BaseLayout
+  title={`Sport: ${sport}`}
+  description={`Teams that played ${sport}.`}
+>
+  <h1>{sport}</h1>
+  <p>{list.length} {list.length === 1 ? "team" : "teams"} on record.</p>
+  <ul>
+    {
+      list.map((t) => (
+        <li>
+          <a href={`/teams/${t.teamSlug}`}>{t.name}</a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import FactGrid from '../../components/FactGrid.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON, pairwise, staticPathsFromPairs } from '../../lib/loaders';
+
+interface Org {
+  orgSlug: string;
+  orgName: string;
+  orgType?: string | null;
+  founded?: number | string | null;
+  ended?: number | string | null;
+  colors?: string | null;
+  colorsHex1?: string | null;
+  colorsHex2?: string | null;
+  motto?: string | null;
+  creed?: string | null;
+  flower?: string | null;
+  yell?: string | null;
+  song?: string | null;
+  emblem?: string | null;
+  password?: string | null;
+  location?: string | null;
+  time?: string | null;
+  mascot?: string | null;
+  banner?: string | null;
+  philosophy?: string | null;
+  signal?: string | null;
+  purpose?: string | null;
+  hobby?: string | null;
+  pledge?: string | null;
+  note?: string | null;
+  instances?: { orgInstanceSlug: string; orgInstanceName: string; orgInstanceDate?: number }[];
+}
+
+interface Props {
+  org: Org;
+  prev: { href: string; label: string } | null;
+  next: { href: string; label: string } | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>> {
+  const orgs = await loadJSON<Org[]>('data/build/orgs.json');
+
+  const sorted = [...orgs].sort((a, b) => (a.orgName ?? '').localeCompare(b.orgName ?? ''));
+  
+
+
+  return sorted.map((o, idx, all) => {
+    const prev = idx > 0 ? all[idx - 1] : null;
+    const next = idx < all.length - 1 ? all[idx + 1] : null;
+
+    return {
+      params: { slug: o.orgSlug },
+      props: {
+        org: o,
+        prev: prev ? { href: `/orgs/${prev.orgSlug}`, label: prev.orgName } : null,
+        next: next ? { href: `/orgs/${next.orgSlug}`, label: next.orgName } : null,
+      },
+    };
+  });
+}
+
+
+const { org, prev, next } = Astro.props;
+
+const instances = org.instances ?? [];
+
+const facts: { label: string; value: string }[] = [];
+if (org.orgType) {
+  facts.push({
+    label: 'Type',
+    value: `<a href="/orgs/by-type/${org.orgType.toLowerCase()}">${org.orgType}</a>`,
+  });
+}
+if (org.founded) facts.push({ label: 'Founded', value: String(org.founded) });
+if (org.ended) facts.push({ label: 'Ended', value: String(org.ended) });
+if (org.colors) facts.push({ label: 'Colors', value: org.colors });
+if (org.emblem) facts.push({ label: 'Emblem', value: org.emblem });
+if (org.motto) facts.push({ label: 'Motto', value: org.motto });
+if (org.creed) facts.push({ label: 'Creed', value: org.creed });
+if (org.flower) facts.push({ label: 'Flower', value: org.flower });
+if (org.yell) facts.push({ label: 'Yell', value: org.yell });
+if (org.song) facts.push({ label: 'Song', value: org.song });
+if (org.mascot) facts.push({ label: 'Mascot', value: org.mascot });
+if (org.banner) facts.push({ label: 'Banner', value: org.banner });
+if (org.password) facts.push({ label: 'Password', value: org.password });
+if (org.location) facts.push({ label: 'Location', value: org.location });
+if (org.time) facts.push({ label: 'Time', value: org.time });
+if (org.philosophy) facts.push({ label: 'Philosophy', value: org.philosophy });
+if (org.signal) facts.push({ label: 'Signal', value: org.signal });
+if (org.purpose) facts.push({ label: 'Purpose', value: org.purpose });
+if (org.hobby) facts.push({ label: 'Hobby', value: org.hobby });
+if (org.pledge) facts.push({ label: 'Pledge', value: org.pledge });
+
+const swatch = [org.colorsHex1, org.colorsHex2]
+  .flatMap((c) => (typeof c === "string" ? c.split(",").map((s) => s.trim()) : []))
+  .filter((c): c is string => /#[0-9a-fA-F]{3,8}/.test(c));
+
+---
+<BaseLayout title={org.orgName} description={`${org.orgName} (${org.orgType ?? 'organization'}).`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Orgs', href: '/orgs' },
+      { label: org.orgName },
+    ]}
+  />
+
+  <EntityHeader title={org.orgName} subtitle={null} />
+
+  <EntityMeta
+    type="org"
+    name={org.orgName}
+    year={org.founded ?? null}
+  />
+
+  {swatch.length > 0 && (
+    <div>
+      <div class="swatches" aria-hidden="true">
+        {swatch.map((c) => <span style={`background:${c}`} class="swatch"></span>)}
+      </div>
+      <style>
+        .swatches { display: flex; gap: .5rem; margin: 1rem 0; }
+        .swatch { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
+      </style>
+    </div>
+  )}
+  {org.note && (
+    <section>
+      <h2>Note</h2>
+      <p set:html={org.note} />
+    </section>
+  )}
+  <FactGrid items={facts} />
+
+  <RelatedList
+    title={`Instances${instances.length ? ` (${instances.length})` : ''}`}
+    items={instances
+      .slice()
+      .sort((a, b) => (a.orgInstanceDate ?? 0) - (b.orgInstanceDate ?? 0))
+      .map((oi) => ({
+        name: oi.orgInstanceName,
+        href: `/org-instances/${oi.orgInstanceSlug}`,
+      }))}
+  />
+
+  <PrevNext prev={prev} next={next} baseHref="/orgs" baseLabel="All orgs" />
+</BaseLayout>

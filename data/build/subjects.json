@@ -1,0 +1,506 @@
+[
+  {
+    "subjectSlug": "academy",
+    "subjectName": "Academy"
+  },
+  {
+    "subjectSlug": "academy-english",
+    "subjectName": "Academy English"
+  },
+  {
+    "subjectSlug": "academy-history",
+    "subjectName": "Academy History"
+  },
+  {
+    "subjectSlug": "academy-mathematics",
+    "subjectName": "Academy Mathematics"
+  },
+  {
+    "subjectSlug": "academy-science",
+    "subjectName": "Academy Science"
+  },
+  {
+    "subjectSlug": "ancient-languages",
+    "subjectName": "Ancient Languages"
+  },
+  {
+    "subjectSlug": "art",
+    "subjectName": "Art"
+  },
+  {
+    "subjectSlug": "astronomy",
+    "subjectName": "Astronomy"
+  },
+  {
+    "subjectSlug": "band",
+    "subjectName": "Band"
+  },
+  {
+    "subjectSlug": "band-music",
+    "subjectName": "Band Music"
+  },
+  {
+    "subjectSlug": "bible",
+    "subjectName": "Bible"
+  },
+  {
+    "subjectSlug": "biblical-literature",
+    "subjectName": "Biblical Literature"
+  },
+  {
+    "subjectSlug": "biological-sciences",
+    "subjectName": "Biological Sciences"
+  },
+  {
+    "subjectSlug": "biology",
+    "subjectName": "Biology"
+  },
+  {
+    "subjectSlug": "bookkeeping",
+    "subjectName": "Bookkeeping"
+  },
+  {
+    "subjectSlug": "business",
+    "subjectName": "Business"
+  },
+  {
+    "subjectSlug": "calisthenics",
+    "subjectName": "Calisthenics"
+  },
+  {
+    "subjectSlug": "carving",
+    "subjectName": "Carving"
+  },
+  {
+    "subjectSlug": "cello",
+    "subjectName": "Cello"
+  },
+  {
+    "subjectSlug": "chemistry",
+    "subjectName": "Chemistry"
+  },
+  {
+    "subjectSlug": "chemistry-assistant",
+    "subjectName": "Chemistry Assistant"
+  },
+  {
+    "subjectSlug": "choral",
+    "subjectName": "Choral"
+  },
+  {
+    "subjectSlug": "commercial-department",
+    "subjectName": "Commercial Department"
+  },
+  {
+    "subjectSlug": "commercial-law",
+    "subjectName": "Commercial Law"
+  },
+  {
+    "subjectSlug": "cornet",
+    "subjectName": "Cornet"
+  },
+  {
+    "subjectSlug": "counterpoint",
+    "subjectName": "Counterpoint"
+  },
+  {
+    "subjectSlug": "domestic-art",
+    "subjectName": "Domestic Art"
+  },
+  {
+    "subjectSlug": "domestic-science",
+    "subjectName": "Domestic Science"
+  },
+  {
+    "subjectSlug": "drawing",
+    "subjectName": "Drawing"
+  },
+  {
+    "subjectSlug": "dressmaking",
+    "subjectName": "Dressmaking"
+  },
+  {
+    "subjectSlug": "dressmaking,-cutting,-and-fitting",
+    "subjectName": "Dressmaking, Cutting, and Fitting"
+  },
+  {
+    "subjectSlug": "economics",
+    "subjectName": "Economics"
+  },
+  {
+    "subjectSlug": "education",
+    "subjectName": "Education"
+  },
+  {
+    "subjectSlug": "elocution",
+    "subjectName": "Elocution"
+  },
+  {
+    "subjectSlug": "elocution-assistant",
+    "subjectName": "Elocution Assistant"
+  },
+  {
+    "subjectSlug": "embroidery",
+    "subjectName": "Embroidery"
+  },
+  {
+    "subjectSlug": "english",
+    "subjectName": "English"
+  },
+  {
+    "subjectSlug": "english-assistant",
+    "subjectName": "English Assistant"
+  },
+  {
+    "subjectSlug": "expression",
+    "subjectName": "Expression"
+  },
+  {
+    "subjectSlug": "expression-assistant",
+    "subjectName": "Expression Assistant"
+  },
+  {
+    "subjectSlug": "fancy-cooking",
+    "subjectName": "Fancy Cooking"
+  },
+  {
+    "subjectSlug": "fine-needlework",
+    "subjectName": "Fine Needlework"
+  },
+  {
+    "subjectSlug": "french",
+    "subjectName": "French"
+  },
+  {
+    "subjectSlug": "geometry",
+    "subjectName": "Geometry"
+  },
+  {
+    "subjectSlug": "german",
+    "subjectName": "German"
+  },
+  {
+    "subjectSlug": "girls-athletics",
+    "subjectName": "Girls' Athletics"
+  },
+  {
+    "subjectSlug": "greek",
+    "subjectName": "Greek"
+  },
+  {
+    "subjectSlug": "guitar",
+    "subjectName": "Guitar"
+  },
+  {
+    "subjectSlug": "gymnasium",
+    "subjectName": "Gymnasium"
+  },
+  {
+    "subjectSlug": "harmony",
+    "subjectName": "Harmony"
+  },
+  {
+    "subjectSlug": "harp",
+    "subjectName": "Harp"
+  },
+  {
+    "subjectSlug": "high-school",
+    "subjectName": "High School"
+  },
+  {
+    "subjectSlug": "high-school-bible",
+    "subjectName": "High School Bible"
+  },
+  {
+    "subjectSlug": "high-school-english",
+    "subjectName": "High School English"
+  },
+  {
+    "subjectSlug": "high-school-greek",
+    "subjectName": "High School Greek"
+  },
+  {
+    "subjectSlug": "high-school-history",
+    "subjectName": "High School History"
+  },
+  {
+    "subjectSlug": "high-school-latin",
+    "subjectName": "High School Latin"
+  },
+  {
+    "subjectSlug": "high-school-mathematics",
+    "subjectName": "High School Mathematics"
+  },
+  {
+    "subjectSlug": "high-school-science",
+    "subjectName": "High School Science"
+  },
+  {
+    "subjectSlug": "higher-mathematics",
+    "subjectName": "Higher Mathematics"
+  },
+  {
+    "subjectSlug": "history",
+    "subjectName": "History"
+  },
+  {
+    "subjectSlug": "home-economics",
+    "subjectName": "Home Economics"
+  },
+  {
+    "subjectSlug": "instrumental-music",
+    "subjectName": "Instrumental Music"
+  },
+  {
+    "subjectSlug": "laboratory-assistant",
+    "subjectName": "Laboratory Assistant"
+  },
+  {
+    "subjectSlug": "languages",
+    "subjectName": "Languages"
+  },
+  {
+    "subjectSlug": "latin",
+    "subjectName": "Latin"
+  },
+  {
+    "subjectSlug": "mandolin",
+    "subjectName": "Mandolin"
+  },
+  {
+    "subjectSlug": "mathematics",
+    "subjectName": "Mathematics"
+  },
+  {
+    "subjectSlug": "mathematics-assistant",
+    "subjectName": "Mathematics Assistant"
+  },
+  {
+    "subjectSlug": "mental-science",
+    "subjectName": "Mental Science"
+  },
+  {
+    "subjectSlug": "military",
+    "subjectName": "Military"
+  },
+  {
+    "subjectSlug": "military-tactics",
+    "subjectName": "Military Tactics"
+  },
+  {
+    "subjectSlug": "millinery",
+    "subjectName": "Millinery"
+  },
+  {
+    "subjectSlug": "ministerial-training",
+    "subjectName": "Ministerial Training"
+  },
+  {
+    "subjectSlug": "modern-languages",
+    "subjectName": "Modern Languages"
+  },
+  {
+    "subjectSlug": "moral-science",
+    "subjectName": "Moral Science"
+  },
+  {
+    "subjectSlug": "music",
+    "subjectName": "Music"
+  },
+  {
+    "subjectSlug": "music-theory",
+    "subjectName": "Music Theory"
+  },
+  {
+    "subjectSlug": "natural-science",
+    "subjectName": "Natural Science"
+  },
+  {
+    "subjectSlug": "orchestra",
+    "subjectName": "Orchestra"
+  },
+  {
+    "subjectSlug": "orchestral-music",
+    "subjectName": "Orchestral Music"
+  },
+  {
+    "subjectSlug": "orchestral-music-assistant",
+    "subjectName": "Orchestral Music Assistant"
+  },
+  {
+    "subjectSlug": "organ",
+    "subjectName": "Organ"
+  },
+  {
+    "subjectSlug": "painting",
+    "subjectName": "Painting"
+  },
+  {
+    "subjectSlug": "penmanship",
+    "subjectName": "Penmanship"
+  },
+  {
+    "subjectSlug": "philosophy",
+    "subjectName": "Philosophy"
+  },
+  {
+    "subjectSlug": "photography",
+    "subjectName": "Photography"
+  },
+  {
+    "subjectSlug": "physical-culture",
+    "subjectName": "Physical Culture"
+  },
+  {
+    "subjectSlug": "physical-education",
+    "subjectName": "Physical Education"
+  },
+  {
+    "subjectSlug": "physical-education-assistant",
+    "subjectName": "Physical Education Assistant"
+  },
+  {
+    "subjectSlug": "physical-sciences",
+    "subjectName": "Physical Sciences"
+  },
+  {
+    "subjectSlug": "physical-training-for-girls",
+    "subjectName": "Physical Training for Girls"
+  },
+  {
+    "subjectSlug": "physics",
+    "subjectName": "Physics"
+  },
+  {
+    "subjectSlug": "piano",
+    "subjectName": "Piano"
+  },
+  {
+    "subjectSlug": "piano-music",
+    "subjectName": "Piano Music"
+  },
+  {
+    "subjectSlug": "piano-music-assistant",
+    "subjectName": "Piano Music Assistant"
+  },
+  {
+    "subjectSlug": "politicial-science",
+    "subjectName": "Politicial Science"
+  },
+  {
+    "subjectSlug": "preparatory-department",
+    "subjectName": "Preparatory Department"
+  },
+  {
+    "subjectSlug": "primary-department",
+    "subjectName": "Primary Department"
+  },
+  {
+    "subjectSlug": "psychology",
+    "subjectName": "Psychology"
+  },
+  {
+    "subjectSlug": "religious-education",
+    "subjectName": "Religious Education"
+  },
+  {
+    "subjectSlug": "science",
+    "subjectName": "Science"
+  },
+  {
+    "subjectSlug": "science-assistant",
+    "subjectName": "Science Assistant"
+  },
+  {
+    "subjectSlug": "sculpturing",
+    "subjectName": "Sculpturing"
+  },
+  {
+    "subjectSlug": "shorthand",
+    "subjectName": "Shorthand"
+  },
+  {
+    "subjectSlug": "small-instruments",
+    "subjectName": "Small Instruments"
+  },
+  {
+    "subjectSlug": "social-sciences",
+    "subjectName": "Social Sciences"
+  },
+  {
+    "subjectSlug": "sociology",
+    "subjectName": "Sociology"
+  },
+  {
+    "subjectSlug": "spanish",
+    "subjectName": "Spanish"
+  },
+  {
+    "subjectSlug": "stenography",
+    "subjectName": "Stenography"
+  },
+  {
+    "subjectSlug": "stringed-instruments",
+    "subjectName": "Stringed Instruments"
+  },
+  {
+    "subjectSlug": "sunday-school-pedagogy",
+    "subjectName": "Sunday School Pedagogy"
+  },
+  {
+    "subjectSlug": "sunday-school-teacher-training",
+    "subjectName": "Sunday School Teacher Training"
+  },
+  {
+    "subjectSlug": "taxidermy",
+    "subjectName": "Taxidermy"
+  },
+  {
+    "subjectSlug": "teacher-training",
+    "subjectName": "Teacher Training"
+  },
+  {
+    "subjectSlug": "telegraphy",
+    "subjectName": "Telegraphy"
+  },
+  {
+    "subjectSlug": "trigonometry",
+    "subjectName": "Trigonometry"
+  },
+  {
+    "subjectSlug": "typewriting",
+    "subjectName": "Typewriting"
+  },
+  {
+    "subjectSlug": "typography",
+    "subjectName": "Typography"
+  },
+  {
+    "subjectSlug": "unknown",
+    "subjectName": "Unknown Subject"
+  },
+  {
+    "subjectSlug": "violin",
+    "subjectName": "Violin"
+  },
+  {
+    "subjectSlug": "vocal-music",
+    "subjectName": "Vocal Music"
+  },
+  {
+    "subjectSlug": "vocalization",
+    "subjectName": "Vocalization"
+  },
+  {
+    "subjectSlug": "voice",
+    "subjectName": "Voice"
+  },
+  {
+    "subjectSlug": "voice-culture",
+    "subjectName": "Voice Culture"
+  },
+  {
+    "subjectSlug": "woodshop",
+    "subjectName": "Woodshop"
+  }
+]

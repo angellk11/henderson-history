@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON, pairwise, staticPathsFromPairs } from '../../lib/loaders';
+
+interface Instrument {
+  instrumentSlug: string;
+  instrumentName: string;
+}
+
+interface Props {
+  instrument: Instrument;
+  prev: { href: string; label: string } | null;
+  next: { href: string; label: string } | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>>  {
+  const raw = await loadJSON<any[]>('data/build/instruments.json');
+
+  const instruments: Instrument[] = raw
+    .map((row) => row?.instrument ?? row)
+    .filter((i): i is Instrument => !!i && !!(i as any).instrumentSlug);
+  const sorted = [...instruments].sort((a, b) =>
+    (a.instrumentName ?? '').localeCompare(b.instrumentName ?? '')
+  );
+  const pairs = pairwise(sorted, (i) => `/instruments/${i.instrumentSlug}`, (i) => i.instrumentName);
+  return sorted.map((b, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: b.instrumentSlug },
+      props: {
+        instrument: b,
+        prev: prev ? { href: `/instruments/${prev.instrumentSlug}`, label: prev.instrumentName } : null,
+        next: next ? { href: `/instruments/${next.instrumentSlug}`, label: next.instrumentName } : null,
+      },
+    };
+  });
+}
+
+const { instrument, prev, next } = Astro.props;
+
+const people: any[] = await loadJSON<any[]>('data/build/people.json');
+
+const players = people
+  .map((p) => {
+    const orch = (p.orchInstruments ?? []).some((x: any) => x.instrumentSlug === instrument.instrumentSlug);
+    const band = (p.bandInstruments ?? []).some((x: any) => x.instrumentSlug === instrument.instrumentSlug);
+    return orch || band ? { person: p, band: !orch } : null;
+  })
+  .filter((row): row is { person: any; band: boolean } => row !== null)
+  .sort(
+    (a, b) =>
+      (a.person.lastName ?? a.person.name ?? '').toString().localeCompare(
+        (b.person.lastName ?? b.person.name ?? '').toString()
+      ) ||
+      (a.person.firstName ?? '').toString().localeCompare(
+        (b.person.firstName ?? '').toString()
+      )
+  );
+---
+<BaseLayout title={instrument.instrumentName} description={`Players of ${instrument.instrumentName}.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Instruments', href: '/instruments' },
+      { label: instrument.instrumentName },
+    ]}
+  />
+
+  <EntityHeader title={instrument.instrumentName} />
+
+  <EntityMeta type="instrument" name={instrument.instrumentName} />
+
+  <RelatedList
+    title={`Players${players.length ? ` (${players.length})` : ''}`}
+    items={players.map((p) => ({
+      name: p.person.name,
+      href: `/people/${p.person.slug ?? p.person.personId}`,
+      meta: p.band ? 'Band' : 'Orchestra',
+    }))}
+  />
+
+  <PrevNext prev={prev} next={next} baseHref="/instruments" baseLabel="All instruments" />
+</BaseLayout>

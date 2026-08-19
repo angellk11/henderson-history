@@ -1,11 +1,36 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const counts = await Promise.all(
+  ['people', 'teams', 'orgs', 'orgInstances', 'classes', 'subjects', 'buildings', 'instruments', 'staffRoles']
+    .map(async (k) => {
+      try {
+        const j = JSON.parse(await fs.readFile(path.resolve(process.cwd(), `data/build/${k}.json`), 'utf-8'));
+        return [k, Array.isArray(j) ? j.length : 0] as const;
+      } catch { return [k, 0] as const; }
+    })
+);
+const total = Object.fromEntries(counts);
 ---
+<BaseLayout title="Home" description="A simpler, browsable encyclopedia of college history.">
+  <h1>College History</h1>
+  <p>An encyclopedia of people, teams, organizations, classes, buildings, and more — built from a Neo4j graph as a static site.</p>
 
-<Layout>
-	<Welcome />
-</Layout>
+  <ul class="counts">
+    <li><a href="/people">{total.people ?? 0}</a> people</li>
+    <li><a href="/teams">{total.teams ?? 0}</a> teams</li>
+    <li><a href="/orgs">{total.orgs ?? 0}</a> organizations</li>
+    <li><a href="/org-instances">{total.orgInstances ?? 0}</a> org instances</li>
+    <li><a href="/classes">{total.classes ?? 0}</a> classes</li>
+    <li><a href="/subjects">{total.subjects ?? 0}</a> subjects</li>
+    <li><a href="/campus">{total.buildings ?? 0}</a> buildings</li>
+    <li><a href="/instruments">{total.instruments ?? 0}</a> instruments</li>
+    <li><a href="/staff-roles">{total.staffRoles ?? 0}</a> staff roles</li>
+  </ul>
+</BaseLayout>
+<style>
+  .counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .5rem; padding: 0; list-style: none; }
+  .counts li { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem; }
+</style>

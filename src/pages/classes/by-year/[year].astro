@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadJSON } from '../../../lib/loaders';
+
+interface Klass {
+  classSlug: string;
+  name: string;
+  classYear: number;
+}
+
+interface Props {
+  year: number;
+  list: Klass[];
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { year: string }; props: Props }>> {
+  const classes = await loadJSON<Klass[]>('data/build/classes.json');
+
+  const years = [...new Set(
+    classes
+      .map((c) => Number(c.classYear))
+      .filter((y): y is number => Number.isFinite(y))
+  )].sort((a, b) => a - b);
+
+  return years.map((year) => {
+    const list = classes
+      .filter((c) => c.classYear === year)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return {
+      params: { year: String(year) },
+      props: { year, list },
+    };
+  });
+}
+
+const { year, list } = Astro.props as Props;
+---
+<BaseLayout title={`Classes in ${year}`} description={`Classes recorded for ${year}.`}>
+  <h1>Classes · {year}</h1>
+  <p>{list.length} {list.length === 1 ? 'class' : 'classes'} in {year}.</p>
+  <ul>
+    {list.map((c) => (
+      <li><a href={`/classes/${c.classSlug}`}>{c.name}</a></li>
+    ))}
+  </ul>
+</BaseLayout>

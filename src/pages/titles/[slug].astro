@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntityHeader from "../../components/EntityHeader.astro";
+import RelatedList from "../../components/RelatedList.astro";
+import EntityMeta from "../../components/EntityMeta.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import PrevNext from "../../components/PrevNext.astro";
+import { loadJSON, pairwise, staticPathsFromPairs } from "../../lib/loaders";
+
+interface Title {
+  titleSlug: string;
+  titleName: string;
+}
+interface Sibling {
+  href: string;
+  label: string;
+}
+interface Props {
+  title: Title;
+  prev: Sibling | null;
+  next: Sibling | null;
+}
+
+export async function getStaticPaths(): Promise<
+  Array<{ params: { slug: string }; props: Props }>
+> {
+  const raw = await loadJSON<any[]>("data/build/titles.json");
+
+  const titles: Title[] = raw
+    .map((row) => row?.title ?? row)
+    .filter((s): s is Title => !!s && !!(s as any).titleSlug);
+
+  const sorted = [...titles].sort((a, b) =>
+    (a.titleName ?? "").localeCompare(b.titleName ?? ""),
+  );
+
+  return sorted.map((t, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: t.titleSlug },
+      props: {
+        title: t,
+        prev: prev
+          ? { href: `/titles/${prev.titleSlug}`, label: prev.titleName }
+          : null,
+        next: next
+          ? { href: `/titles/${next.titleSlug}`, label: next.titleName }
+          : null,
+      },
+    };
+  });
+}
+
+const { title, prev, next } = Astro.props as Props;
+
+const people: any[] = await loadJSON<any[]>("data/build/people.json");
+
+interface Holder {
+  person: any;
+  year: number | null;
+}
+const holders: Holder[] = people
+  .flatMap((p) =>
+    (p.titles ?? []).map((ti: any) => {
+      const year = Array.isArray(ti.year) ? ti.year[0].low : ti.year;
+      return ti.titleSlug === title.titleSlug
+        ? { person: p, year: year ?? null }
+        : null;
+    }),
+  )
+  .filter((row): row is Holder => row !== null)
+  .sort((a, b) => {
+    if (a.year == null && b.year == null) return 0;
+    if (a.year == null) return 1;
+    if (b.year == null) return -1;
+    return a.year - b.year;
+  });
+---
+
+<BaseLayout
+  title={title.titleName}
+  description={`People who held the ${title.titleName} title.`}
+>
+  <Breadcrumbs
+    crumbs={[
+      { label: "Home", href: "/" },
+      { label: "Titles", href: "/titles" },
+      { label: title.titleName },
+    ]}
+  />
+
+  <EntityHeader title={title.titleName} />
+
+  <EntityMeta type="title" name={title.titleName} />
+
+  <RelatedList
+    title={`Holders${holders.length ? ` (${holders.length})` : ""}`}
+    items={holders.map((h) => ({
+      name: h.person.name,
+      href: `/people/${h.person.slug}`,
+      meta: h.year ? String(h.year) : null,
+    }))}
+  />
+
+  <PrevNext prev={prev} next={next} baseHref="/titles" baseLabel="All titles" />
+</BaseLayout>

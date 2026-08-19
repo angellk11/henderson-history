@@ -1,0 +1,12 @@
+---
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const classes = JSON.parse(await fs.readFile(path.resolve(process.cwd(), 'data/build/classes.json'), 'utf-8'));
+const sorted = [...classes].sort((a, b) => (a.classYear ?? 0) - (b.classYear ?? 0));
+---
+<BaseLayout title="Classes" description="All classes by year.">
+  <h1>Classes</h1>
+  <ul>{sorted.map((c) => <li><a href={`/classes/${c.classSlug}`}>{c.name}</a></li>)}</ul>
+</BaseLayout>

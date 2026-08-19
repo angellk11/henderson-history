@@ -1,0 +1,25 @@
+---
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const raw: any[] = JSON.parse(
+  await fs.readFile(path.resolve(process.cwd(), 'data/build/titles.json'), 'utf-8')
+);
+const items = raw
+  .map((r) => r?.title ?? r)
+  .filter((s) => s?.titleSlug)
+  .sort((a: any, b: any) => a.titleName.localeCompare(b.titleName));
+---
+<BaseLayout title="Titles" description="All titles given at the college.">
+  <h1>Titles</h1>
+  <ul class="rows">
+    {items.map((s: any) => (
+      <li><a href={`/titles/${s.titleSlug}`}>{s.titleName}</a></li>
+    ))}
+  </ul>
+  <style>
+    .rows { columns: 2; list-style: none; padding: 0; }
+    @media (min-width: 60rem) { .rows { columns: 4; } }
+  </style>
+</BaseLayout>

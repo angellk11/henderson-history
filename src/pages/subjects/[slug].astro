@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON } from '../../lib/loaders';
+
+interface Subject {
+  subjectSlug: string;
+  subjectName: string;
+}
+interface Sibling { href: string; label: string }
+interface Props {
+  subject: Subject;
+  prev: Sibling | null;
+  next: Sibling | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>> {
+  const raw = await loadJSON<any[]>('data/build/subjects.json');
+
+  const subjects: Subject[] = raw
+    .map((row) => row?.subject ?? row)
+    .filter((s): s is Subject => !!s && !!(s as any).subjectSlug);
+  const sorted = [...subjects].sort((a, b) =>
+    (a.subjectName ?? '').localeCompare(b.subjectName ?? '')
+  );
+
+  return sorted.map((s, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: s.subjectSlug },
+      props: {
+        subject: s,
+        prev: prev ? { href: `/subjects/${prev.subjectSlug}`, label: prev.subjectName } : null,
+        next: next ? { href: `/subjects/${next.subjectSlug}`, label: next.subjectName } : null,
+      },
+    };
+  });
+}
+
+const { subject, prev, next } = Astro.props as Props;
+
+const people: any[] = await loadJSON<any[]>('data/build/people.json');
+
+interface Teacher { person: any; taughtYears: number[] }
+
+const teachers: Teacher[] = people
+  .flatMap((p) => {
+    const subs = (p.subjects ?? []) as any[];
+    return subs
+      .filter((s) => s.subjectSlug === subject.subjectSlug)
+      .map((s) => ({
+        person: p,
+        taughtYears: Array.isArray(s.taughtYears)
+          ? s.taughtYears
+          : s.taughtYears
+          ? [s.taughtYears]
+          : [],
+ }));
+  })
+  .sort(
+    (a, b) =>
+      (a.person.lastName ?? a.person.name ?? '').toString().localeCompare(
+        (b.person.lastName ?? b.person.name ?? '').toString()
+      )
+  );
+---
+<BaseLayout title={subject.subjectName} description={`People who taught ${subject.subjectName}.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Subjects', href: '/subjects' },
+      { label: subject.subjectName },
+    ]}
+  />
+
+  <EntityHeader title={subject.subjectName} />
+
+  <EntityMeta type="subject" name={subject.subjectName} />
+
+  <RelatedList
+    title={`Taught by${teachers.length ? ` (${teachers.length})` : ''}`}
+    items={teachers.map((t) => {
+      const yrs = t.taughtYears.length ? `Taught: ${t.taughtYears.join(', ')}` : null;
+      return {
+        name: t.person.name,
+        href: `/people/${t.person.slug ?? t.person.personId}`,
+        meta: yrs,
+      };
+    })}
+  />
+
+  <PrevNext prev={prev} next={next} baseHref="/subjects" baseLabel="All subjects" />
+</BaseLayout>

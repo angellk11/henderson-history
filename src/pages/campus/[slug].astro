@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import FactGrid from '../../components/FactGrid.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON, pairwise, staticPathsFromPairs } from '../../lib/loaders';
+
+interface Building {
+  featureSlug: string;
+  featureName: string;
+  address?: string | null;
+  dateBuilt?: number | string | null;
+  dateNamed?: number | string | null;
+  dateDestroyed?: number | string | null;
+  destructionReason?: string | null;
+  history?: string | null;
+  status?: string | null;
+  lat?: number | null;
+  long?: number | null;
+  namesake?: any[];
+  giftOf?: any[];
+}
+
+interface Props {
+  building: Building;
+  prev: { href: string; label: string } | null;
+  next: { href: string; label: string } | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>> {
+  const raw = await loadJSON<any[]>('data/build/buildings.json');
+
+  const buildings: Building[] = raw
+    .map((row) => row?.campus ?? row)
+    .filter((b): b is Building => !!b && !!(b as any).featureSlug);
+
+  const sorted = [...buildings].sort((a, b) =>
+    (a.featureName ?? '').localeCompare(b.featureName ?? '')
+  );
+
+  return sorted.map((b, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: b.featureSlug },
+      props: {
+        building: b,
+        prev: prev ? { href: `/campus/${prev.featureSlug}`, label: prev.featureName } : null,
+        next: next ? { href: `/campus/${next.featureSlug}`, label: next.featureName } : null,
+      },
+    };
+  });
+}
+
+const { building, prev, next } = Astro.props as unknown as Props;
+
+const facts: { label: string; value: string }[] = [];
+if (building.status) facts.push({ label: 'Status', value: building.status });
+if (building.address) facts.push({ label: 'Address', value: building.address });
+if (building.dateBuilt) facts.push({ label: 'Built', value: String(building.dateBuilt) });
+if (building.dateNamed) facts.push({ label: 'Named', value: String(building.dateNamed) });
+if (building.dateDestroyed) facts.push({ label: 'Destroyed', value: String(building.dateDestroyed) });
+if (building.destructionReason) facts.push({ label: 'Reason', value: building.destructionReason });
+if (building.lat != null && building.long != null) {
+  facts.push({ label: 'Coordinates', value: `${building.lat}, ${building.long}` });
+}
+
+const namesake = building.namesake ?? [];
+const giftOf   = building.giftOf ?? [];
+---
+<BaseLayout title={building.featureName} description={`${building.featureName}, a campus feature.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Campus', href: '/campus' },
+      { label: building.featureName },
+    ]}
+  />
+
+  <EntityHeader title={building.featureName} subtitle={building.status ?? null} />
+
+  <EntityMeta type="building" name={building.featureName} />
+
+  <FactGrid items={facts} />
+
+  {building.history && (
+    <section>
+      <h2>History</h2>
+      <p set:html={building.history} />
+    </section>
+  )}
+
+  {namesake.length > 0 && (
+    <RelatedList
+      title="Namesakes"
+      items={namesake.map((p: any) => ({
+        name: p.name,
+        href: `/people/${p.slug ?? p.personId}`,
+      }))}
+    />
+  )}
+
+  {giftOf.length > 0 && (
+    <RelatedList
+      title="Gift of"
+      items={giftOf.map((c: any) => ({
+        name: c.name ?? c.classYear ?? '',
+        href: `/classes/${c.classSlug}`,
+        meta: c.classYear ? String(c.classYear) : null,
+      }))}
+    />
+  )}
+
+  <PrevNext prev={prev} next={next} baseHref="/campus" baseLabel="All buildings" />
+</BaseLayout>

@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON } from '../../lib/loaders';
+
+interface OrgInst {
+  orgInstanceSlug: string;
+  orgInstanceName: string;
+  orgInstanceDate?: number | null;
+  orgSlug: string;
+  orgName: string;
+  orgType?: string | null;
+  members?: any[];
+}
+
+interface Props {
+  orgInstance: OrgInst;
+  prev: { href: string; label: string } | null;
+  next: { href: string; label: string } | null;
+}
+
+export async function getStaticPaths() {
+  const inst = await loadJSON<OrgInst[]>('data/build/orgInstances.json');
+
+  const valid = inst.filter(
+    (i): i is OrgInst =>
+      typeof i.orgInstanceSlug === 'string' &&
+      i.orgInstanceSlug.trim() !== '' &&
+      typeof i.orgSlug === 'string' &&
+      i.orgSlug.trim() !== ''
+  );
+
+  
+
+  const groups = new Map<string, OrgInst[]>();
+  for (const i of valid) {
+    if (!groups.has(i.orgSlug)) groups.set(i.orgSlug, []);
+    groups.get(i.orgSlug)!.push(i);
+  }
+
+  for (const list of groups.values()) {
+    list.sort((a, b) => {
+      const y = (a.orgInstanceDate ?? 0) - (b.orgInstanceDate ?? 0);
+      if (y !== 0) return y;
+      return (a.orgInstanceName ?? '').localeCompare(b.orgInstanceName ?? '');
+    });
+  }
+
+  const sorted: OrgInst[] = [];
+  for (const s of [...groups.keys()].sort()) sorted.push(...groups.get(s)!);
+
+  const label = (row: OrgInst) =>
+    `${row.orgInstanceName}`;
+
+  return sorted.map((i, idx, all) => {
+    const prev = idx > 0 ? all[idx - 1] : null;
+    const next = idx < all.length - 1 ? all[idx + 1] : null;
+
+    return {
+      params: { slug: i.orgInstanceSlug.trim() },
+      props: {
+        orgInstance: i,
+        prev: prev ? { href: `/org-instances/${prev.orgInstanceSlug}`, label: label(prev) } : null,
+        next: next ? { href: `/org-instances/${next.orgInstanceSlug}`, label: label(next) } : null,
+      },
+    };
+  });
+}
+
+
+
+const { orgInstance: oi, prev, next } = Astro.props;
+
+const members = oi.members ?? [];
+const officers = members.filter((m) => m.office && m.office.length > 0);
+const plainMembers = members.filter((m) => !m.office || m.office.length === 0);
+
+const facts: { label: string; value: string }[] = [
+  { label: 'Organization', value: `<a href="/orgs/${oi.orgSlug}">${oi.orgName}</a>` },
+];
+// if (oi.orgInstanceDate) {
+//   facts.push({
+//     label: 'Year',
+//     value: `<a href="/years/${oi.orgInstanceDate}">${oi.orgInstanceDate}</a>`,
+//   });
+// }
+---
+<BaseLayout title={oi.orgInstanceName} description={`${oi.orgInstanceName} roster.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Orgs', href: '/orgs' },
+      { label: oi.orgName, href: `/orgs/${oi.orgSlug}` },
+      { label: oi.orgInstanceName },
+    ]}
+  />
+
+  <!-- <EntityHeader title={oi.orgInstanceName} subtitle={oi.orgName} /> -->
+    <EntityHeader title={oi.orgInstanceName} />
+
+  <EntityMeta
+    type="org-instance"
+    name={oi.orgInstanceName}
+    year={oi.orgInstanceDate ?? null}
+    orgName={oi.orgName ?? null}
+  />
+
+  {facts.length > 0 && (
+    <section>
+      <h2>Quick facts</h2>
+      <dl class="fact-grid">
+        {facts.map((f) => (
+          <Fragment>
+            <dt>{f.label}</dt>
+            <dd set:html={f.value}></dd>
+          </Fragment>
+        ))}
+      </dl>
+      <style>
+        .fact-grid { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem; }
+        dt { color: var(--muted); }
+        dd { margin: 0; }
+      </style>
+    </section>
+  )}
+
+  <RelatedList
+    title={`Officers${officers.length ? ` (${officers.length})` : ''}`}
+    items={officers.map((p: any) => ({
+      name: p.name,
+      href: `/people/${p.slug}`,
+      meta: p.office?.join(', ') ?? null,
+      unconfirmed: p.certainty === 'Unconfirmed',
+    }))}
+  />
+
+  <RelatedList
+    title={`Members${plainMembers.length ? ` (${plainMembers.length})` : ''}`}
+    items={plainMembers.map((p: any) => ({
+      name: p.name,
+      href: `/people/${p.slug}`,
+      unconfirmed: p.certainty === 'Unconfirmed',
+    }))}
+  />
+
+  <PrevNext
+    prev={prev}
+    next={next}
+    baseHref={`/orgs/${oi.orgSlug}`}
+    baseLabel={oi.orgName}
+  />
+</BaseLayout>

@@ -1,0 +1,56 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const { title, description, noindex } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · College History</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="brand">College History</a>
+        <nav>
+          <a href="/people">People</a>
+          <a href="/teams">Teams</a>
+          <a href="/orgs">Orgs</a>
+          <a href="/classes">Classes</a>
+          <a href="/campus">Buildings</a>
+          <a href="/years">Years</a>
+          <a href="/search">Search</a>
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <small>Static build from Neo4j data. Last generated {new Date().toISOString().slice(0,10)}.</small>
+      </div>
+    </footer>
+
+    <style>
+      .site-header { border-bottom: 1px solid var(--border); background: var(--card); }
+      .site-header .container { display: flex; align-items: center; gap: 1.5rem; }
+      .brand { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; }
+      nav { margin-left: auto; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .site-footer { border-top: 1px solid var(--border); margin-top: 3rem; padding-block: 1rem; color: var(--muted); }
+    </style>
+  </body>
+</html>

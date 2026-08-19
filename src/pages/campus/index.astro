@@ -1,0 +1,28 @@
+---
+import fs from "node:fs/promises";
+import path from "node:path";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const buildings = JSON.parse(
+    await fs.readFile(
+        path.resolve(process.cwd(), "data/build/buildings.json"),
+        "utf-8",
+    ),
+);
+const sorted = [...buildings].sort((a, b) =>
+    (a.featureName ?? "").localeCompare(b.featureName ?? ""),
+);
+---
+
+<BaseLayout title="Campus Features" description="Campus buildings and features.">
+    <h1>Campus</h1>
+    <ul>
+        {
+            sorted.map((c) => (
+                <li>
+                    <a href={`/campus/${c.featureSlug}`}>{c.featureName}</a>
+                </li>
+            ))
+        }
+    </ul>
+</BaseLayout>

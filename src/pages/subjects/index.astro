@@ -1,0 +1,26 @@
+---
+// src/pages/subjects/index.astro
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const raw: any[] = JSON.parse(
+  await fs.readFile(path.resolve(process.cwd(), 'data/build/subjects.json'), 'utf-8')
+);
+const items = raw
+  .map((r) => r?.subject ?? r)
+  .filter((s) => s?.subjectSlug)
+  .sort((a: any, b: any) => a.subjectName.localeCompare(b.subjectName));
+---
+<BaseLayout title="Subjects" description="All subjects taught at the college.">
+  <h1>Subjects</h1>
+  <ul class="rows">
+    {items.map((s: any) => (
+      <li><a href={`/subjects/${s.subjectSlug}`}>{s.subjectName}</a></li>
+    ))}
+  </ul>
+  <style>
+    .rows { columns: 2; list-style: none; padding: 0; }
+    @media (min-width: 60rem) { .rows { columns: 4; } }
+  </style>
+</BaseLayout>

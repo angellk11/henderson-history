@@ -1,0 +1,38 @@
+[
+  {
+    "sportSlug": "baseball",
+    "sportName": "Baseball"
+  },
+  {
+    "sportSlug": "cheerleading",
+    "sportName": "Cheerleading"
+  },
+  {
+    "sportSlug": "dragons",
+    "sportName": "Dragons"
+  },
+  {
+    "sportSlug": "football",
+    "sportName": "Football"
+  },
+  {
+    "sportSlug": "mens-basketball",
+    "sportName": "Men's Basketball"
+  },
+  {
+    "sportSlug": "tennis",
+    "sportName": "Tennis"
+  },
+  {
+    "sportSlug": "track",
+    "sportName": "Track"
+  },
+  {
+    "sportSlug": "unknown-sport",
+    "sportName": "Unknown Sport"
+  },
+  {
+    "sportSlug": "womens-basketball",
+    "sportName": "Women's Basketball"
+  }
+]

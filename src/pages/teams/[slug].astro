@@ -1,0 +1,133 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntityHeader from "../../components/EntityHeader.astro";
+import RelatedList from "../../components/RelatedList.astro";
+import EntityMeta from "../../components/EntityMeta.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import PrevNext from "../../components/PrevNext.astro";
+import { loadJSON, pairwise, staticPathsFromPairs } from "../../lib/loaders";
+
+interface Team {
+  teamSlug: string;
+  name: string;
+  sport?: string | null;
+  sportSlug?: string | null;
+  teamYear?: number | null;
+  coaches?: any[];
+  roster?: any[];
+}
+interface Sibling {
+  href: string;
+  label: string;
+}
+interface Props {
+  team: Team;
+  prev: Sibling | null;
+  next: Sibling | null;
+}
+
+export async function getStaticPaths(): Promise<
+  Array<{ params: { slug: string }; props: Props }>
+> {
+  const teams = await loadJSON<Team[]>("data/build/teams.json");
+
+  const sorted = [...teams].sort((a, b) => {
+    const s = (a.sport ?? "").localeCompare(b.sport ?? "");
+    if (s !== 0) return s;
+    const y = (a.teamYear ?? 0) - (b.teamYear ?? 0);
+    if (y !== 0) return y;
+    return a.name.localeCompare(b.name);
+  });
+
+  return sorted.map((t, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: t.teamSlug },
+      props: {
+        team: t,
+        prev: prev
+          ? {
+              href: `/teams/${prev.teamSlug}`,
+              label: `${prev.name}`,
+            }
+          : null,
+        next: next
+          ? {
+              href: `/teams/${next.teamSlug}`,
+              label: `${next.name}`,
+            }
+          : null,
+      },
+    };
+  });
+}
+
+const { team, prev, next } = Astro.props as Props;
+
+const coaches = team.coaches ?? [];
+const roster = team.roster ?? [];
+
+const isUnknownRoster =
+  roster?.length === 0 || roster.every((m: any) => m?.name == null);
+const isUnknownCoaches =
+  coaches?.length === 0 || coaches.every((m: any) => m?.name == null);
+
+const titleRoster = isUnknownRoster
+  ? "Roster (?)"
+  : `Roster (${roster.length})`;
+const titleCoaches = isUnknownCoaches
+  ? "Coaches (?)"
+  : `Coaches (${coaches.length})`;
+
+const itemsR = isUnknownRoster
+  ? [{ name: "Unknown", href: "#", meta: null }]
+  : roster
+      .filter((m: any) => m?.name != null && m?.slug != null)
+      .map((m: any) => ({
+        name: m.name,
+        href: `/people/${m.slug}`,
+        meta:
+          [m.position?.join?.(", "), m.rank].filter(Boolean).join(" · ") ||
+          null,
+        unconfirmed: m.certainty === "Unconfirmed",
+      }));
+
+const itemsC = isUnknownCoaches
+  ? [{ name: "Unknown", href: "#", meta: null }]
+  : coaches
+      .filter((m: any) => m?.name != null && m?.slug != null)
+      .map((m: any) => ({
+        name: m.name,
+        href: `/people/${m.slug}`,
+        meta: m.type ?? null,
+      }));
+---
+
+<BaseLayout title={team.name} description={`${team.name} roster and coaches.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: "Home", href: "/" },
+      { label: "Teams", href: "/teams" },
+      ...(team.sport
+        ? [
+            {
+              label: team.sport,
+              href: `/teams/by-sport/${team.sportSlug ?? team.sport}`,
+            },
+          ]
+        : []),
+      { label: team.name },
+    ]}
+  />
+
+  <EntityHeader title={team.name} />
+
+  <EntityMeta type="team" name={team.name} />
+
+  <RelatedList title={titleCoaches} items={itemsC} />
+
+  <RelatedList title={titleRoster} items={itemsR} />
+
+  <PrevNext prev={prev} next={next} baseHref="/teams" baseLabel="All teams" />
+</BaseLayout>

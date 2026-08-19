@@ -1,0 +1,22 @@
+---
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const orgs = JSON.parse(await fs.readFile(path.resolve(process.cwd(), 'data/build/orgs.json'), 'utf-8'));
+const sorted = [...orgs].sort((a, b) => (a.orgName ?? '').localeCompare(b.orgName ?? ''));
+---
+<BaseLayout title="Organizations" description="All organizations across years.">
+  <h1>Organizations</h1>
+  <p>{sorted.length} organizations.</p>
+  <ul class="rows">
+    {sorted.map((o) => (
+      <li>
+        <a href={`/orgs/${o.orgSlug}`}>{o.orgName}</a>
+        {o.orgType && <small> · {o.orgType}</small>}
+      </li>
+    ))}
+  </ul>
+  <style>.rows { columns: 2; column-gap: 2rem; list-style: none; padding: 0; }
+    @media (min-width: 60rem) { .rows { columns: 4; } }</style>
+</BaseLayout>

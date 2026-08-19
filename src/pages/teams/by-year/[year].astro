@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadJSON } from '../../../lib/loaders';
+
+interface Team {
+  teamSlug: string;
+  name: string;
+  sport?: string | null;
+  teamYear?: number | null;
+}
+
+interface Props {
+  year: number;
+  list: Team[];
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { year: string }; props: Props }>> {
+  const teams = await loadJSON<Team[]>('data/build/teams.json');
+
+  const years = [...new Set(
+    teams
+ .map((t) => Number(t.teamYear))
+      .filter((y): y is number => Number.isFinite(y))
+ )].sort((a, b) => a - b);
+
+  return years.map((year) => {
+    const list = teams
+      .filter((t) => Number(t.teamYear) === year)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return {
+      params: { year: String(year) },
+      props: { year, list },
+    };
+  });
+}
+
+const { year, list } = Astro.props as Props;
+---
+<BaseLayout title={`Teams in ${year}`} description={`Athletic teams in ${year}.`}>
+  <h1>Teams · {year}</h1>
+  <p>{list.length} {list.length === 1 ? 'team' : 'teams'} on record for {year}.</p>
+  <ul>
+    {list.map((t) => (
+      <li>
+        <a href={`/teams/${t.teamSlug}`}>{t.name}</a>
+        {t.sport ? <small> · {t.sport}</small> : null}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

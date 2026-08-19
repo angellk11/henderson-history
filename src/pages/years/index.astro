@@ -1,0 +1,54 @@
+---
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  return [{ params: { dummy: 'all' } }];
+}
+
+const buildDir = path.resolve(process.cwd(), 'data/build');
+const [people, teams, orgInst, classes] = await Promise.all([
+  fs.readFile(path.join(buildDir, 'people.json'), 'utf-8').then(JSON.parse),
+  fs.readFile(path.join(buildDir, 'teams.json'),  'utf-8').then(JSON.parse),
+  fs.readFile(path.join(buildDir, 'orgInstances.json'), 'utf-8').then(JSON.parse),
+  fs.readFile(path.join(buildDir, 'classes.json'), 'utf-8').then(JSON.parse),
+]);
+
+function finiteYears(arr: any[], getYear: (item: any) => unknown): Set<number> {
+  const out = new Set<number>();
+  for (const it of arr) {
+    const y = Number(getYear(it));
+    if (Number.isFinite(y)) out.add(y);
+  }
+  return out;
+}
+
+const years = new Set<number>();
+finiteYears(people,  (p) => p?.classes).forEach(() => {});
+people.forEach((p: any) => {
+  for (const c of p.classes ?? []) {
+    const y = Number(c.classYear);
+    if (Number.isFinite(y)) years.add(y);
+  }
+});
+finiteYears(teams,    (t) => t?.teamYear).forEach((y) => years.add(y));
+finiteYears(orgInst,  (o) => o?.orgInstanceDate).forEach((y) => years.add(y));
+finiteYears(classes,  (c) => c?.classYear).forEach((y) => years.add(y));
+
+const sorted = [...years].sort((a, b) => b - a);
+---
+<BaseLayout title="Years" description="Browse the college history by year.">
+  <h1>Years</h1>
+  <p>{sorted.length} years on record.</p>
+  <ul class="rows">
+    {sorted.map((y) => (
+      <li><a href={`/years/${y}`}>{y}</a></li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<style>
+  .rows { columns: 3; column-gap: 2rem; list-style: none; padding: 0; }
+  @media (min-width: 60rem) { .rows { columns: 6; } }
+</style>

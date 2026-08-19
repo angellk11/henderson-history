@@ -1,0 +1,197 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const TYPE_LABELS: Record<string, string> = {
+  person: "People",
+  org: "Organizations",
+  building: "Buildings",
+};
+
+const activeTypes = Object.keys(TYPE_LABELS);
+---
+
+<BaseLayout
+  title="Search"
+  description="Search the college history encyclopedia."
+>
+  <h1>Search</h1>
+
+  <input
+    id="q"
+    type="search"
+    placeholder="Search people, teams, orgs…"
+    aria-label="Search"
+    autocomplete="off"
+  />
+
+  <fieldset class="filters">
+    <legend>Show</legend>
+    {
+      activeTypes.map((type) => (
+        <label>
+          <input type="checkbox" value={type} checked />
+          {TYPE_LABELS[type]}
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <p id="status">Loading search index…</p>
+  <ul id="results"></ul>
+
+  <noscript>
+    <p>
+      Search requires JavaScript. Try the <a href="/people">browse index</a>.
+    </p>
+  </noscript>
+
+  <script>
+    import MiniSearch from "minisearch";
+import type { IndexedDoc } from "../lib/types";
+
+    interface SearchItem {
+      type: string;
+      slug: string;
+      title: string;
+      subtitle: string | null;
+      tokens: string[];
+      year: number | null;
+    }
+
+    const HREF_BY_TYPE: Record<string, (s: string) => string> = {
+      person: (s) => `/people/${s}`,
+      team: (s) => `/teams/${s}`,
+      org: (s) => `/orgs/${s}`,
+      "org-instance": (s) => `/org-instances/${s}`,
+      class: (s) => `/classes/${s}`,
+      subject: (s) => `/subjects/${s}`,
+      building: (s) => `/campus/${s}`,
+      instrument: (s) => `/instruments/${s}`,
+      "staff-role": (s) => `/staff-roles/${s}`,
+      title: (s) => `/titles/${s}`,
+    };
+
+    const q = document.getElementById("q") as HTMLInputElement;
+    const out = document.getElementById("results") as HTMLUListElement;
+    const status = document.getElementById("status") as HTMLParagraphElement;
+    const filterInputs = document.querySelectorAll<HTMLInputElement>(
+      ".filters input[type=checkbox]",
+    );
+
+    const allowed = new Set<string>();
+    filterInputs.forEach((i) => i.checked && allowed.add(i.value));
+    filterInputs.forEach((i) =>
+      i.addEventListener("change", () => {
+        i.checked ? allowed.add(i.value) : allowed.delete(i.value);
+        runSearch();
+      }),
+    );
+
+    let miniSearch: MiniSearch<IndexedDoc> | null = null;
+    q.disabled = true;
+
+    function escape(s: string): string {
+      return s.replace(
+        /[&<>"']/g,
+        (c) =>
+          ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          })[c]!,
+      );
+    }
+
+    function render(results: IndexedDoc[]) {
+      out.innerHTML = results
+        .slice(0, 60)
+        .map((r) => {
+          const href = HREF_BY_TYPE[r.type]?.(r.slug) ?? "#";
+          const yearStr = r.year ? ` · ${r.year}` : "";
+          const subtitleStr = r.subtitle ? ` — ${escape(r.subtitle)}` : "";
+          return `
+            <li>
+              <a href="${href}"><strong>${escape(r.title)}</strong></a>
+              <small> · ${r.type}${yearStr}</small>
+              ${r.subtitle ? `<small>${subtitleStr}</small>` : ""}
+            </li>
+          `;
+        })
+        .join("");
+    }
+
+    function runSearch() {
+      if (!miniSearch) return;
+      const term = q.value.trim();
+      if (term.length < 2) {
+        out.innerHTML = "";
+        return;
+      }
+      const results = miniSearch
+        .search(term)
+        .filter((r) =>
+          allowed.has(r.type as string),
+        ) as unknown as IndexedDoc[];
+      render(results);
+    }
+
+    q.addEventListener("input", runSearch);
+
+    try {
+      const res = await fetch("/search/index.json");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.text();
+      miniSearch = MiniSearch.loadJSON<IndexedDoc>(json, {
+        fields: ["title", "subtitle", "tokens"],
+        storeFields: ["type", "slug", "title", "subtitle", "year"],
+        searchOptions: {
+          boost: { title: 3, subtitle: 1.5 },
+          fuzzy: 0.2,
+          prefix: true,
+        },
+      });
+      status.remove();
+      q.disabled = false;
+    } catch (err) {
+      status.textContent =
+        "Search index unavailable. Run npm run build:search.";
+      console.error(err);
+    }
+  </script>
+
+  <style>
+    .search {
+      margin-block: 1rem;
+    }
+    .results {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      gap: 0.25rem;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin: 0.5rem 0 1rem;
+    }
+    .filters label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    small {
+      color: var(--muted);
+    }
+    input[type="search"] {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: var(--card);
+      color: var(--fg);
+    }
+  </style>
+</BaseLayout>

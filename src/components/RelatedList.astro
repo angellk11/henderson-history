@@ -1,0 +1,27 @@
+---
+export interface Props {
+  title: string;
+  items: { name: string; href: string; meta?: string | null; unconfirmed?: boolean }[];
+}
+const { title, items } = Astro.props;
+---
+{
+  items.length > 0 && (
+    <section>
+      <h2>{title}</h2>
+      <ul class="related">
+        {items.map((i) => (
+          <li>
+            <a href={i.href}>{i.name}</a>
+            {i.meta && <span class="meta"> · {i.meta}</span>}
+            {i.unconfirmed && <span class="badge unconfirmed">unconfirmed</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+<style>
+  .related { list-style: none; padding: 0; margin: 0; display: grid; gap: .35rem; }
+  .meta { color: var(--muted); font-size: .9rem; }
+</style>

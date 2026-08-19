@@ -1,0 +1,126 @@
+[
+  {
+    "instrumentSlug": "accompanist",
+    "instrumentName": "Accompanist"
+  },
+  {
+    "instrumentSlug": "alto",
+    "instrumentName": "Alto"
+  },
+  {
+    "instrumentSlug": "baritone",
+    "instrumentName": "Baritone"
+  },
+  {
+    "instrumentSlug": "bass",
+    "instrumentName": "Bass"
+  },
+  {
+    "instrumentSlug": "bass-drum",
+    "instrumentName": "Bass Drum"
+  },
+  {
+    "instrumentSlug": "bass-violin",
+    "instrumentName": "Bass Violin"
+  },
+  {
+    "instrumentSlug": "cello",
+    "instrumentName": "Cello"
+  },
+  {
+    "instrumentSlug": "clarinet",
+    "instrumentName": "Clarinet"
+  },
+  {
+    "instrumentSlug": "cornet",
+    "instrumentName": "Cornet"
+  },
+  {
+    "instrumentSlug": "drum",
+    "instrumentName": "Drum"
+  },
+  {
+    "instrumentSlug": "drums",
+    "instrumentName": "Drums"
+  },
+  {
+    "instrumentSlug": "first-cornet",
+    "instrumentName": "First Cornet"
+  },
+  {
+    "instrumentSlug": "first-violin",
+    "instrumentName": "First Violin"
+  },
+  {
+    "instrumentSlug": "guitar",
+    "instrumentName": "Guitar"
+  },
+  {
+    "instrumentSlug": "kettledrum",
+    "instrumentName": "Kettledrum"
+  },
+  {
+    "instrumentSlug": "mandolin",
+    "instrumentName": "Mandolin"
+  },
+  {
+    "instrumentSlug": "piano",
+    "instrumentName": "Piano"
+  },
+  {
+    "instrumentSlug": "saxophone",
+    "instrumentName": "Saxophone"
+  },
+  {
+    "instrumentSlug": "second-cornet",
+    "instrumentName": "Second Cornet"
+  },
+  {
+    "instrumentSlug": "second-violin",
+    "instrumentName": "Second Violin"
+  },
+  {
+    "instrumentSlug": "slide-trombone",
+    "instrumentName": "Slide Trombone"
+  },
+  {
+    "instrumentSlug": "snare-drum",
+    "instrumentName": "Snare Drum"
+  },
+  {
+    "instrumentSlug": "tambourine",
+    "instrumentName": "Tambourine"
+  },
+  {
+    "instrumentSlug": "tenor",
+    "instrumentName": "Tenor"
+  },
+  {
+    "instrumentSlug": "triangle",
+    "instrumentName": "Triangle"
+  },
+  {
+    "instrumentSlug": "trombone",
+    "instrumentName": "Trombone"
+  },
+  {
+    "instrumentSlug": "tuba",
+    "instrumentName": "Tuba"
+  },
+  {
+    "instrumentSlug": "unknown-instrument",
+    "instrumentName": "Unknown Instrument"
+  },
+  {
+    "instrumentSlug": "viola",
+    "instrumentName": "Viola"
+  },
+  {
+    "instrumentSlug": "violin",
+    "instrumentName": "Violin"
+  },
+  {
+    "instrumentSlug": "violoncello",
+    "instrumentName": "Violoncello"
+  }
+]

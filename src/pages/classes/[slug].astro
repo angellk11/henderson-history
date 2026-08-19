@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntityHeader from '../../components/EntityHeader.astro';
+import RelatedList from '../../components/RelatedList.astro';
+import EntityMeta from '../../components/EntityMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PrevNext from '../../components/PrevNext.astro';
+import { loadJSON, pairwise, staticPathsFromPairs } from '../../lib/loaders';
+
+interface Klass {
+  classSlug: string;
+  name: string;
+  classYear: number;
+  classColors?: string | null;
+  classFlower?: string | null;
+  classMotto?: string | null;
+  classYell?: string | null;
+  classSong?: string | null;
+  classMascot?: string | null;
+  classNote?: string | null;
+  members?: any[];
+}
+interface Sibling { href: string; label: string }
+interface Props {
+  klass: Klass;
+  prev: Sibling | null;
+  next: Sibling | null;
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { slug: string }; props: Props }>> {
+  const classes = await loadJSON<Klass[]>('data/build/classes.json');
+
+  const sorted = [...classes].sort((a, b) => {
+    const y = (a.classYear ?? 0) - (b.classYear ?? 0);
+    if (y !== 0) return y;
+    return (a.classSlug ?? '').localeCompare(b.classSlug ?? '');
+ });
+
+  return sorted.map((c, i, all) => {
+    const prev = i > 0 ? all[i - 1] : null;
+    const next = i < all.length - 1 ? all[i + 1] : null;
+    return {
+      params: { slug: c.classSlug },
+      props: {
+        klass: c,
+        prev: prev ? { href: `/classes/${prev.classSlug}`, label: prev.name } : null,
+        next: next ? { href: `/classes/${next.classSlug}`, label: next.name } : null,
+      },
+    };
+  });
+}
+
+const { klass, prev, next } = Astro.props as Props;
+
+
+const members = klass.members ?? [];
+
+const facts: { label: string; value: string }[] = [];
+
+if (klass.classColors) facts.push({ label: 'Colors', value: klass.classColors });
+if (klass.classFlower) facts.push({ label: 'Flower', value: klass.classFlower });
+if (klass.classMotto) facts.push({ label: 'Motto', value: klass.classMotto });
+if (klass.classYell) facts.push({ label: 'Yell', value: klass.classYell });
+if (klass.classSong) facts.push({ label: 'Song', value: klass.classSong });
+if (klass.classMascot) facts.push({ label: 'Mascot', value: klass.classMascot });
+if (klass.classNote) facts.push({ label: 'Note', value: klass.classNote });
+
+const isUnknown = members?.length === 0 || members.every((m: any) => m?.name == null);
+
+const title = isUnknown ? 'Members (?)' : `Members (${members.length})`;
+
+const items = isUnknown
+  ? [{ name: 'Unknown', href: '#', meta: null }]
+  : members
+      .filter((m: any) => m?.name != null && m?.slug != null)
+      .map((m: any) => ({
+        name: m.name,
+        href: `/people/${m.slug}`,
+        meta: m.office?.length ? m.office.join(', ') : null,
+      }));
+---
+<BaseLayout title={klass.name} description={`${klass.name} members and customs.`}>
+  <Breadcrumbs
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Classes', href: '/classes' },
+      { label: klass.name },
+    ]}
+  />
+
+  <EntityHeader title={klass.name} subtitle={klass.classMotto ?? null} />
+
+  <EntityMeta
+    type="class"
+    name={klass.name}
+    notes={klass.classNote ?? null}
+  />
+  {facts ? (
+  <section>
+    <h2>Details</h2>
+    <dl class="fact-grid">
+      {facts.map((f) => (
+        <Fragment>
+          <dt>{f.label}</dt>
+          <dd set:html={f.value}></dd>
+        </Fragment>
+      ))}
+    </dl>
+  </section>
+  <style>
+    .fact-grid { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem; }
+    dt { color: var(--muted); }
+    dd { margin: 0; }
+  </style>) : ''
+}
+  <RelatedList
+    title={title} items={items}
+  />
+
+  <PrevNext prev={prev} next={next} baseHref="/classes" baseLabel="All classes" />
+</BaseLayout>

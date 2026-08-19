@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadJSON } from '../../../lib/loaders';
+
+interface Org {
+  orgSlug: string;
+  orgName: string;
+  orgType?: string | null;
+}
+
+interface Props {
+  type: string;
+  list: Org[];
+}
+
+export async function getStaticPaths(): Promise<Array<{ params: { type: string }; props: Props }>> {
+  const orgs = await loadJSON<Org[]>('data/build/orgs.json');
+
+  const types = [...new Set(
+    orgs
+      .map((o) => (o.orgType ?? '').trim())
+      .filter((t) => t.length > 0)
+  )].sort();
+
+  return types.map((type) => {
+    const list = orgs
+      .filter((o) => (o.orgType ?? '').toLowerCase() === type.toLowerCase())
+      .sort((a, b) => (a.orgName ?? '').localeCompare(b.orgName ?? ''));
+
+    return {
+      params: { type: type.toLowerCase() },
+      props: { type, list },
+    };
+  });
+}
+
+const { type, list } = Astro.props as Props;
+---
+<BaseLayout title={`Orgs: ${type}`} description={`${list.length} ${type} organizations.`}>
+  <h1>{type}</h1>
+  <p>{list.length} {list.length === 1 ? 'organization' : 'organizations'} of this type.</p>
+  <ul class="rows">
+    {list.map((o) => (
+      <li>
+        <a href={`/orgs/${o.orgSlug}`}>{o.orgName}</a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<style>
+  .rows { columns: 2; column-gap: 2rem; list-style: none; padding: 0; }
+  @media (min-width: 60rem) { .rows { columns: 4; } }
+</style>

@@ -1,0 +1,25 @@
+---
+export interface Item { label: string; value: string }
+export interface Props { items: Item[] }
+const { items } = Astro.props;
+const visible = items.filter((it) => it.label && it.value);
+---
+{visible.length > 0 && (
+  <section class="fg">
+    <h2>Details</h2>
+    <dl>
+      {visible.map((it) => (
+        <Fragment>
+          <dt set:html={it.label}></dt>
+          <dd set:html={it.value}></dd>
+        </Fragment>
+      ))}
+    </dl>
+  </section>
+)}
+
+<style>
+  .fg dl { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem; }
+  .fg dt { color: var(--muted); }
+  .fg dd { margin: 0; }
+</style>
